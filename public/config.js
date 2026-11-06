@@ -25,13 +25,13 @@ window.SHOP = {
   depositRate: 0.2,               // 訂金比例
 
   bank: {
-    name: "台新銀行",
-    code: "812",
-    account: "21001050139694",
-    holder: "祝*甯",
+    name: "兆豐銀行",
+    code: "017",
+    account: "02210973411",
+    holder: "吳*群",
   },
 
-  lineId: "@975hvmns",        // LINE 官方帳號請用 @ 開頭；個人 ID 則不加 @
+  lineId: "originalfake",        // LINE 官方帳號請用 @ 開頭；個人 ID 則不加 @
   // 訂單寫入本站後台。留空則只讓客人複製訂單、不寫入紀錄
   orderWebhookUrl: "/api/orders",
 

@@ -1,0 +1,12 @@
+{
+  "name": "storybystory-shop",
+  "private": true,
+  "description": "Yoto proxy shop storefront with an order desk and US buying list.",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/orders.test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

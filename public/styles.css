@@ -54,6 +54,7 @@ button { font: inherit; cursor: pointer; }
 .hero p { color: var(--muted); max-width: 30em; }
 .hero-cta { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
 .btn { display: inline-block; text-decoration: none; padding: 12px 26px; border-radius: 99px; font-weight: 700; border: 2px solid var(--ink); background: none; color: var(--ink); }
+.btn[hidden] { display: none; }
 .btn-dark { background: var(--ink); color: #fff; }
 .btn-sale { background: var(--sale); border-color: var(--sale); color: #fff; }
 .btn:disabled { opacity: .4; cursor: not-allowed; }

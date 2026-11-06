@@ -210,8 +210,8 @@
     const list = filtered();
     $("#grid").innerHTML = list.slice(0, shown).map(cardHtml).join("");
     $("#status").textContent = list.length ? `共 ${list.length} 件商品` : state.cat === "tp" && !state.q ? "副廠配件即將上架，敬請期待！" : "找不到符合的商品";
-    const rest = list.length - shown;
-    $("#more").hidden = rest <= 0;
+    const rest = Math.max(0, list.length - shown);
+    $("#more").hidden = rest === 0;
     $("#more").textContent = `載入更多（還有 ${rest} 件）`;
   }
 
@@ -313,7 +313,12 @@
   let qTimer;
   $("#q").addEventListener("input", (e) => { clearTimeout(qTimer); qTimer = setTimeout(() => { state.q = e.target.value; document.querySelectorAll("#quick button").forEach((x) => x.classList.toggle("on", x.dataset.qs === state.q)); shown = PAGE_SIZE; render(); }, 200); });
   $("#sort").addEventListener("change", (e) => { state.sort = e.target.value; render(); });
-  $("#more").addEventListener("click", () => { shown += PAGE_SIZE; render(); });
+  $("#more").addEventListener("click", () => {
+    const rest = filtered().length - shown;
+    if (rest <= 0) return;
+    shown += Math.min(PAGE_SIZE, rest);
+    render();
+  });
 
   // ---------- 購物車 ----------
   function load() { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; } }

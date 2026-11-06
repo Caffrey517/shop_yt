@@ -180,11 +180,11 @@
     </div>`;
   }
 
-  // 美國官網商品頁。副廠配件沒有官網網址。
-  function officialLink(handle) {
-    if (!handle || String(handle).startsWith("tp-")) return "";
+  // 商品圖本身連到美國官網。副廠配件沒有官網網址，維持原圖。
+  function linkedImg(handle, title, imgHtml) {
+    if (!imgHtml || !handle || String(handle).startsWith("tp-")) return imgHtml;
     const url = `${SOURCE}/products/${encodeURIComponent(handle)}`;
-    return `<a class="official" href="${esc(url)}" target="_blank" rel="noopener">在 Yoto 官網查看此商品 ↗</a>`;
+    return `<a class="official" href="${esc(url)}" target="_blank" rel="noopener" aria-label="${esc("在 Yoto 官網查看 " + title)}">${imgHtml}</a>`;
   }
 
   function cardHtml(p) {
@@ -201,14 +201,13 @@
       ? `<select data-variant>${p.variants.map((x) => `<option value="${x.id}" ${x.id === v.id ? "selected" : ""} ${x.ok ? "" : "disabled"}>${esc(x.title)}${x.ok ? "" : "（缺貨）"}</option>`).join("")}</select>` : "";
     return `<article class="card" data-handle="${esc(p.handle)}">
       ${tag}
-      <div class="img">${p.img ? `<img loading="lazy" src="${esc(p.img)}" alt="${esc(p.title)}">` : ""}</div>
+      <div class="img">${p.img ? linkedImg(p.handle, p.title, `<img loading="lazy" src="${esc(p.img)}" alt="">`) : ""}</div>
       <div class="body">
         <h4>${esc(p.title)}</h4>
         <span class="vendor">${esc(p.vendor)}${ageTxt}</span>
         ${p.note ? `<span class="note">${esc(p.note)}</span>` : ""}
         ${select}
         <div data-price>${priceHtml(v)}</div>
-        ${officialLink(p.handle)}
         <button class="add" data-add ${allOut ? "disabled" : ""}>${allOut ? "暫無庫存" : "加入購物車"}</button>
       </div>
     </article>`;
@@ -229,11 +228,10 @@
       const v = best(p);
       return `<div class="feat card" data-handle="${esc(p.handle)}">
         ${offPct(v) ? `<span class="tag tag-off">-${offPct(v)}%</span>` : ""}
-        <img src="${esc(p.img)}" alt="">
+        ${linkedImg(p.handle, p.title, `<img src="${esc(p.img)}" alt="">`)}
         <div style="flex:1">
           <h4>${esc(p.title)}</h4>
           ${priceHtml(v)}
-          ${officialLink(p.handle)}
           <button class="add" data-add style="margin-top:8px;width:100%">加入購物車</button>
         </div>
       </div>`;
@@ -378,8 +376,8 @@
     }
     $("#drawerBody").innerHTML = cart.map((l, i) => `
       <div class="line">
-        <img src="${esc(l.img)}" alt="">
-        <div><h5>${esc(l.title)}</h5>${officialLink(l.handle)}${l.variant ? `<small>${esc(l.variant)}</small><br>` : ""}
+        ${linkedImg(l.handle, l.title, `<img src="${esc(l.img)}" alt="">`)}
+        <div><h5>${esc(l.title)}</h5>${l.variant ? `<small>${esc(l.variant)}</small><br>` : ""}
           <span class="price-now ${l.was ? "is-sale" : ""}" style="font-size:15px">${ntd(l.now)}</span>
           ${l.was ? `<span class="price-was">${ntd(l.was)}</span>` : ""}</div>
         <div class="qty"><button data-q="${i}" data-d="-1">−</button><span>${l.qty}</span><button data-q="${i}" data-d="1">＋</button></div>

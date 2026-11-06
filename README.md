@@ -58,7 +58,7 @@ The stored deposit in `lib/orders.js` is also 20%. Change `depositRate` in `conf
 
 ## Catalog (`public/app.js`)
 
-The shop is one page. There is no separate product page on this site. Each catalog card, featured item, and cart line links to that product on the Yoto US site: `https://us.yotoplay.com/products/<handle>`. Third-party accessories have no official page, so they are not linked.
+The shop is one page. There is no separate product page on this site. The product photo on each catalog card, featured item, and cart line opens that product on the Yoto US site: `https://us.yotoplay.com/products/<handle>`. Third-party accessories have no official page, so their photos are not linked.
 
 - Header jumps: 播放器, 故事卡, 配件, and 購買流程 (`#how`)
 - Tabs: 全部, 特價中, 播放器, 播放器組合, 故事卡, 卡片套組, 原廠配件, 副廠配件

@@ -69,6 +69,12 @@ app.post("/api/orders", (req, res) => {
     if (result.error) return res.status(400).json({ ok: false, error: result.error });
     return res.json({ ok: true, order: result.order });
   }
+  if (body.action === "delete") {
+    if (!orders.keyOk(body.key)) return res.status(401).json({ ok: false, error: "unauthorized" });
+    const result = orders.deleteOrder(String(body.orderNo || ""));
+    if (result.error) return res.status(400).json({ ok: false, error: result.error });
+    return res.json({ ok: true, orderNo: result.order.orderNo });
+  }
   if (limited(req.ip || "local")) return res.status(429).json({ ok: false, error: "請稍後再試" });
   const result = orders.createOrder(body);
   if (result.error) return res.status(400).json({ ok: false, error: result.error });

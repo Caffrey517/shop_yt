@@ -107,6 +107,43 @@ test("an order is stored and appears on the buying list after the deposit is mar
   assert.equal(again.orders[0].status, "已收訂金");
 });
 
+test("deleting an order removes it from the buying list", async () => {
+  const orderNo = "Y261106DEL1";
+  const created = await fetch(`${base}/api/orders`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ ...sample, orderNo }),
+  });
+  assert.equal(created.status, 201);
+  const paid = await fetch(`${base}/api/orders`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ action: "update", key: "test-key", orderNo, status: "已收訂金" }),
+  });
+  assert.equal(paid.status, 200);
+
+  const denied = await fetch(`${base}/api/orders`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ action: "delete", orderNo }),
+  });
+  assert.equal(denied.status, 401);
+
+  const removed = await fetch(`${base}/api/orders`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ action: "delete", key: "test-key", orderNo }),
+  });
+  assert.equal(removed.status, 200);
+
+  const listed = await fetch(`${base}/api/orders?key=test-key`).then((res) => res.json());
+  assert.equal(listed.orders.some((order) => order.orderNo === orderNo), false);
+  const buying = await fetch(`${base}/api/buying-list?key=test-key`).then((res) => res.json());
+  const stillThere = listed.orders.some((order) => order.orderNo === orderNo && order.status === "已收訂金");
+  assert.equal(stillThere, false);
+  assert.equal(Array.isArray(buying.rows), true);
+});
+
 test("bad checkout data is rejected", async () => {
   const res = await fetch(`${base}/api/orders`, {
     method: "POST",

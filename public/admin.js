@@ -224,7 +224,7 @@
           </dl>
           <h5>內部備註</h5>
           <textarea data-f="adminNote" rows="2" placeholder="例如：US 訂單編號、追蹤碼">${esc(o.adminNote)}</textarea>
-          <div class="acts"><button class="btn" data-copy>複製訂單文字</button></div>
+          <div class="acts"><button class="btn" type="button" data-copy>複製訂單文字</button><button class="btn btn-del" type="button" data-del>刪除訂單</button></div>
         </div>
       </div>`;
   }
@@ -285,6 +285,12 @@
     const v = e.target.closest("[data-view]"); if (v) { ui.view = v.dataset.view; return render(); }
     const st = e.target.closest("[data-st]"); if (st) { ui.status = st.dataset.st; return render(); }
     if (e.target.id === "csv") return exportCsv();
+    const del = e.target.closest("[data-del]");
+    if (del) {
+      const no = del.closest("[data-detail]")?.dataset.detail;
+      if (no) deleteOrder(no);
+      return;
+    }
     const cp = e.target.closest("[data-copy]");
     if (cp) {
       const o = orders.find((x) => x.orderNo === cp.closest("[data-detail]").dataset.detail);
@@ -312,6 +318,31 @@
     clearTimeout(qT);
     qT = setTimeout(() => { ui.q = e.target.value; render(); const q = $("#q"); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }, 250);
   });
+
+  async function deleteOrder(orderNo) {
+    const o = orders.find((x) => x.orderNo === orderNo);
+    if (!o) return;
+    if (!confirm(`刪除訂單 ${orderNo}（${o.name}）？\n刪除後無法復原，也不會再出現在採購清單。`)) return;
+    if (demo) {
+      orders = orders.filter((x) => x.orderNo !== orderNo);
+      ui.open.delete(orderNo);
+      toastish("（示範模式：變更不會儲存）");
+      return render();
+    }
+    try {
+      const res = await fetch(S.orderWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete", key: sessionStorage.getItem(KEY_STORE), orderNo }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) { alert(j.error || "刪除失敗"); return; }
+      orders = orders.filter((x) => x.orderNo !== orderNo);
+      ui.open.delete(orderNo);
+      toastish("已刪除 " + orderNo);
+      render();
+    } catch { alert("刪除失敗，請檢查網路"); }
+  }
 
   function orderText(o) {
     return [`【${S.name} 訂單 ${o.orderNo}】`, `姓名：${o.name}`, `手機：${o.phone}`, `LINE：${o.line}`, `7-11 門市：${o.store}`, "",

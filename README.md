@@ -1,6 +1,6 @@
 # 一本一本 育兒選物
 
-Storefront and order desk rebuilt from the public pages at `https://storybystory-shop.netlify.app/`. Product names, photos, and US-dollar prices are loaded live from the Yoto US catalog. Orders and the US buying list are stored by this app.
+Storefront and order desk for the Yoto proxy shop. Product names, photos, and US-dollar prices load live from the Yoto US catalog. Checkout and the US buying list are saved by this app.
 
 ## Run
 
@@ -9,51 +9,77 @@ npm install
 npm start
 ```
 
-Open `http://127.0.0.1:3000/`. The order desk is `http://127.0.0.1:3000/admin`.
+`server.js` listens on `0.0.0.0`. The port is `PORT`, or `3000` when that is unset.
 
-The desk password is the `ADMIN_KEY` environment variable. When it is unset, the local default is `story-admin`. Set `ADMIN_KEY` before starting the server if you want a different password. Orders are written to `data/orders.json`.
+- Shop: `http://127.0.0.1:3000/`
+- Order desk: `http://127.0.0.1:3000/admin`
+
+The desk password is `ADMIN_KEY`. The running default in `lib/orders.js` is `story-admin`.
 
 ```bash
 ADMIN_KEY=your-password npm start
 ```
 
-## Pages
+Orders are written to `data/orders.json` (`ORDERS_PATH` overrides that file). `npm test` checks page serving, saving an order, and building the buying list.
 
-| Path | What it shows |
+## JavaScript
+
+| File | Role |
 | --- | --- |
-| `/` | Shop name, sale ticker, featured players, the five-step buying flow (`#how`), and the catalog (`#shop`) |
-| `/admin` | Password login, order list, and the merged US buying list. `?demo` opens sample orders that are not saved |
+| `public/config.js` | Shop name, badge, exchange rates, deposit, bank, LINE ID, search shortcuts, featured products, and where orders are posted |
+| `public/app.js` | Catalog, cart, checkout, and the receipt. Reads `window.SHOP` |
+| `public/admin.js` | Order desk: login, status updates, CSV export, and the merged US buying list |
+| `server.js` | Serves the pages and the order API. Listens on `0.0.0.0` |
+| `lib/orders.js` | Validates a checkout, stores orders, and builds the buying list |
 
-The catalog is one page. These controls stay on `/`:
+`public/index.html` is the shop. `public/admin.html` is the desk. Card-type membership is `public/data/collections.json`.
 
-- Header jumps: 播放器, 故事卡, 配件, 購買流程 (`#shop` with a category, or `#how`)
-- Category tabs: 全部, 特價中, 播放器, 播放器組合, 故事卡, 卡片套組, 原廠配件, 副廠配件
-- Age, card type, language, search, and sort
-- Cart drawer, checkout form, and the receipt with the bank transfer and LINE account
+## Settings in `public/config.js`
 
-There is no separate product URL. Each card is rendered in the grid.
+Day-to-day shop changes belong in this file.
 
-## Links on the pages
+| Setting | Current value |
+| --- | --- |
+| Name | 一本一本 育兒選物 |
+| Badge | Yoto 秋季特惠 10/12 結單 |
+| Players, player bundles, accessories | USD × 40 |
+| Story cards and card packs | USD × 35 + NT$100 |
+| Deposit | 20% (`depositRate: 0.2`). The rest is due on pickup |
+| Bank | 兆豐銀行 (017), account `02210973411`, 吳*群 |
+| LINE | `originalfake517` (personal ID, no leading `@`) |
+| Orders | `orderWebhookUrl: "/api/orders"` |
+| Featured | `yoto-mini-player-2024`, `yoto-mini-4` |
+| Quick search | Super Simple Songs, Bluey, Disney, Yoto Originals, Peppa Pig, Make Your Own Card |
+| Third-party accessories | `thirdParty` is empty, so 副廠配件 shows 「即將上架」 |
 
-- Catalog data: `https://us.yotoplay.com/products.json`
-- Card-type membership: `/data/collections.json` (same lists the original Netlify function returns)
-- LINE friend link and QR code, built from the ID in `public/config.js`
-- 7-ELEVEN store map: `https://emap.pcsc.com.tw/`
-- On the buying list, each row opens `https://us.yotoplay.com/products/<handle>`
+`app.js` prices each product with `pricing` and `typeMap`. A LINE ID that starts with `@` is treated as an official account and gets a QR code. The current ID does not, so the receipt shows a friend link and a copy button only. Leaving `orderWebhookUrl` empty skips saving and only lets the shopper copy the order text.
 
-## Pricing
+The stored deposit in `lib/orders.js` is also 20%. Change `depositRate` in `config.js` and `DEPOSIT_RATE` in `lib/orders.js` together.
 
-Configured in `public/config.js`:
+## Catalog (`public/app.js`)
 
-- Players, bundles, and accessories: USD × 40
-- Cards and card packs: USD × 35 + NT$100
-- Deposit: 20% of the NT$ total. The rest is due on pickup
+The shop is one page. There is no separate product URL.
 
-## Order desk
+- Header jumps: 播放器, 故事卡, 配件, and 購買流程 (`#how`)
+- Tabs: 全部, 特價中, 播放器, 播放器組合, 故事卡, 卡片套組, 原廠配件, 副廠配件
+- Age, card type, language (default 英文商品), search, and sort
+- 「載入更多」 shows 40 more items. It hides when none are left, and the remainder does not go below zero
 
-1. A shopper checks out. `POST /api/orders` stores the buyer, the 7-ELEVEN store, and each line.
-2. Sign in at `/admin` and set the transfer’s last five digits and the status.
-3. Orders marked **已收訂金** are merged into **美國官網採購清單**. The same merge is `GET /api/buying-list?key=...`.
-4. After you place the US order, change those rows to **已向官網下單** so they leave the list.
+Checkout asks for name, a `09` mobile number, LINE ID, email, and the 7-ELEVEN store name plus 6-digit store number. The map link is `https://emap.pcsc.com.tw/`. The receipt then shows the bank block from `config.js` and the order text.
 
-`npm test` covers page serving, saving an order, and building the buying list.
+Catalog data comes from `https://us.yotoplay.com/products.json`. Card groups come from `/.netlify/functions/collections`, which `server.js` serves from `public/data/collections.json`.
+
+## Order desk (`public/admin.js`)
+
+Sign in at `/admin` with the desk password. `?demo`, or the 「示範資料」 link, opens sample orders that are not saved.
+
+Statuses: 待匯訂金, 已收訂金, 已向官網下單, 已抵台, 已寄出, 已完成, 已取消. Each row can store the transfer’s last five digits and an internal note. The list can be exported as CSV.
+
+**美國官網採購清單** merges orders whose status is 已收訂金. Each row links to `https://us.yotoplay.com/products/<handle>`. After the US order is placed, change those rows to 已向官網下單 so they leave the list.
+
+| Request | What it does |
+| --- | --- |
+| `POST /api/orders` | Saves a checkout |
+| `GET /api/orders?key=...` | Lists orders. Requires the desk password |
+| `POST /api/orders` with `action: "update"` | Updates status, last five digits, or the internal note |
+| `GET /api/buying-list?key=...` | Returns the merged 已收訂金 list |

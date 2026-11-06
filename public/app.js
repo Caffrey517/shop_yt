@@ -180,6 +180,13 @@
     </div>`;
   }
 
+  // 美國官網商品頁。副廠配件沒有官網網址。
+  function officialLink(handle) {
+    if (!handle || String(handle).startsWith("tp-")) return "";
+    const url = `${SOURCE}/products/${encodeURIComponent(handle)}`;
+    return `<a class="official" href="${esc(url)}" target="_blank" rel="noopener">在 Yoto 官網查看此商品 ↗</a>`;
+  }
+
   function cardHtml(p) {
     const v = best(p);
     const off = offPct(v);
@@ -201,6 +208,7 @@
         ${p.note ? `<span class="note">${esc(p.note)}</span>` : ""}
         ${select}
         <div data-price>${priceHtml(v)}</div>
+        ${officialLink(p.handle)}
         <button class="add" data-add ${allOut ? "disabled" : ""}>${allOut ? "暫無庫存" : "加入購物車"}</button>
       </div>
     </article>`;
@@ -225,6 +233,7 @@
         <div style="flex:1">
           <h4>${esc(p.title)}</h4>
           ${priceHtml(v)}
+          ${officialLink(p.handle)}
           <button class="add" data-add style="margin-top:8px;width:100%">加入購物車</button>
         </div>
       </div>`;
@@ -370,7 +379,7 @@
     $("#drawerBody").innerHTML = cart.map((l, i) => `
       <div class="line">
         <img src="${esc(l.img)}" alt="">
-        <div><h5>${esc(l.title)}</h5>${l.variant ? `<small>${esc(l.variant)}</small><br>` : ""}
+        <div><h5>${esc(l.title)}</h5>${officialLink(l.handle)}${l.variant ? `<small>${esc(l.variant)}</small><br>` : ""}
           <span class="price-now ${l.was ? "is-sale" : ""}" style="font-size:15px">${ntd(l.now)}</span>
           ${l.was ? `<span class="price-was">${ntd(l.was)}</span>` : ""}</div>
         <div class="qty"><button data-q="${i}" data-d="-1">−</button><span>${l.qty}</span><button data-q="${i}" data-d="1">＋</button></div>

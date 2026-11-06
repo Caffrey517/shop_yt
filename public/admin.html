@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>訂單後台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { background: #f3efe8; }
+    .adm-top { background: var(--ink); color: #fff; }
+    .adm-top .wrap { display: flex; align-items: center; gap: 14px; height: 58px; }
+    .adm-top h1 { font-size: 18px; margin: 0; font-weight: 900; }
+    .adm-top .mode { font-size: 12px; background: var(--sun); color: var(--ink); padding: 2px 10px; border-radius: 99px; font-weight: 700; }
+    .adm-top .right { margin-left: auto; display: flex; gap: 8px; }
+    .adm-top button { background: none; border: 1px solid rgba(255,255,255,.4); color: #fff; border-radius: 8px; padding: 5px 12px; font-size: 13px; }
+    main.adm { padding: 24px 0 60px; }
+
+    .login { max-width: 380px; margin: 80px auto; background: var(--paper); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
+    .login h2 { margin: 0 0 6px; }
+    .login p { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+    .login input { width: 100%; border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px; font: inherit; margin-bottom: 10px; }
+    .login .btn { width: 100%; text-align: center; margin-top: 6px; }
+    .login .err { color: var(--sale); font-size: 13px; min-height: 1em; }
+    .login .demo-link { text-align: center; margin: 8px 0 0; font-size: 13px; }
+    .login .demo-link a { color: var(--muted); }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+    .kpi { background: var(--paper); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+    .kpi small { color: var(--muted); font-size: 13px; display: block; }
+    .kpi b { font-size: 26px; font-weight: 900; }
+    .kpi.hl b { color: var(--sale); }
+
+    .views { display: flex; gap: 8px; margin-bottom: 14px; }
+    .views button { border: 2px solid var(--ink); background: none; border-radius: 99px; padding: 6px 16px; font-weight: 700; color: var(--ink); }
+    .views button.on { background: var(--ink); color: #fff; }
+
+    .bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+    .chips button { border: 1px solid var(--line); background: var(--paper); border-radius: 99px; padding: 4px 12px; font-size: 13px; color: var(--ink); }
+    .chips button.on { background: var(--sun); border-color: var(--sun); font-weight: 700; }
+    .chips em { font-style: normal; color: var(--muted); margin-left: 4px; }
+    .bar input { border: 2px solid var(--line); border-radius: 10px; padding: 8px 12px; font: inherit; min-width: 220px; background: var(--paper); }
+    .bar .btn { padding: 8px 16px; font-size: 14px; }
+
+    .tbl { background: var(--paper); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+    .row { display: grid; grid-template-columns: 130px 90px 1fr 110px 110px 120px 130px 28px; gap: 10px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .row.head { background: #faf7f1; font-size: 12px; color: var(--muted); font-weight: 700; }
+    .row:not(.head) { cursor: pointer; }
+    .row:not(.head):hover { background: #fffdf6; }
+    .row .no { font-family: ui-monospace, monospace; font-size: 13px; font-weight: 700; }
+    .row .who b { display: block; }
+    .row .who small { color: var(--muted); }
+    .row .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .row select, .row input { font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; padding: 5px 6px; width: 100%; background: #fff; }
+    .row .caret { color: var(--muted); transition: transform .15s; }
+    .row.open .caret { transform: rotate(90deg); }
+    .st { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+
+    .detail { display: none; padding: 4px 16px 18px 16px; border-bottom: 1px solid var(--line); background: #fffdf6; }
+    .detail.show { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
+    .detail h5 { margin: 10px 0 6px; font-size: 13px; color: var(--muted); }
+    .items { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .items td { padding: 5px 4px; border-bottom: 1px dashed var(--line); }
+    .items td:last-child, .items td:nth-child(3) { text-align: right; white-space: nowrap; }
+    .info dl { display: grid; grid-template-columns: 76px 1fr; gap: 4px 8px; margin: 0; font-size: 13px; }
+    .info dt { color: var(--muted); }
+    .info dd { margin: 0; word-break: break-all; }
+    .info textarea { width: 100%; font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; padding: 6px; }
+    .detail .acts { display: flex; gap: 8px; margin-top: 10px; }
+    .detail .acts .btn { padding: 6px 14px; font-size: 13px; }
+
+    .buy-note { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
+    .buy .row { grid-template-columns: 56px 1fr 90px 90px 100px 90px; cursor: default; }
+    .buy img { width: 48px; height: 48px; object-fit: contain; background: #f4efe6; border-radius: 8px; }
+    .buy .row a { color: var(--ink); }
+    .buy .total { font-weight: 900; font-size: 16px; }
+    .empty { padding: 40px; }
+
+    @media (max-width: 900px) {
+      .kpis { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .kpi b { font-size: 20px; }
+      .adm-top h1 { font-size: 15px; }
+      .adm-top .mode, .adm-top button { white-space: nowrap; }
+      .bar { flex-direction: column; flex-wrap: nowrap; align-items: stretch; }
+      .bar > * { width: 100%; min-width: 0; }
+      .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+      .chips button { white-space: nowrap; }
+      .bar input { min-width: 0; }
+      .row.head { display: none; }
+      .tbl:not(.buy) .row:not(.head) { grid-template-columns: 1fr auto; grid-template-areas: "no time" "who total" "last5 status" ; row-gap: 6px; }
+      .row .no { grid-area: no; } .row > span:nth-child(2) { grid-area: time; color: var(--muted); font-size: 12px; }
+      .row .who { grid-area: who; } .row .num:nth-child(4) { grid-area: total; font-weight: 900; }
+      .row .num:nth-child(5), .row .caret { display: none; }
+      .row > span:nth-child(6) { grid-area: last5; } .row > span:nth-child(7) { grid-area: status; }
+      .row .num { text-align: right; }
+      .detail.show { grid-template-columns: 1fr; }
+      .buy .row { grid-template-columns: 56px 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="adm-top">
+    <div class="wrap">
+      <h1 id="title">訂單後台</h1>
+      <span class="mode" id="mode" hidden>示範資料</span>
+      <div class="right" id="topActions" hidden>
+        <button id="reload">重新整理</button>
+        <button id="logout">登出</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="adm wrap" id="app"></main>
+
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

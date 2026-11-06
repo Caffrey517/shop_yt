@@ -88,7 +88,7 @@ app.use(express.static(publicDir));
 if (require.main === module) {
   const port = Number(process.env.PORT) || 3000;
   app.listen(port, "0.0.0.0", () => {
-    console.log(`shop listening on http://127.0.0.1:${port}`);
+    console.log(`shop listening on http://0.0.0.0:${port}`);
   });
 }
 

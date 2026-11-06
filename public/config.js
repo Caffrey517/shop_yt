@@ -31,7 +31,7 @@ window.SHOP = {
     holder: "吳*群",
   },
 
-  lineId: "originalfake",        // LINE 官方帳號請用 @ 開頭；個人 ID 則不加 @
+  lineId: "originalfake517",        // LINE 官方帳號請用 @ 開頭；個人 ID 則不加 @
   // 訂單寫入本站後台。留空則只讓客人複製訂單、不寫入紀錄
   orderWebhookUrl: "/api/orders",
 

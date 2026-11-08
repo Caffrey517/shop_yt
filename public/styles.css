@@ -284,5 +284,4 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
   .line-qr { width: 96px; height: 96px; }
 }
 
-.hero p.hero-gift { display: inline-block; margin: 14px 0 0; color: var(--ink); background: #f9e3dd; border: 1px dashed var(--coral); border-radius: 12px; padding: 8px 14px; font-family: var(--display); font-size: 16px; }
 .how h2 { margin-bottom: 36px; }

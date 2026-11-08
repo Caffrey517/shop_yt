@@ -14,13 +14,27 @@ npm start
 - Shop: `http://127.0.0.1:3000/`
 - Order desk: `http://127.0.0.1:3000/admin`
 
-The desk password is `ADMIN_KEY`. The running default in `lib/orders.js` is `story-admin`.
+The desk password is the `ADMIN_KEY` environment variable. When it is unset, the server uses the fallback in `lib/orders.js`.
 
 ```bash
 ADMIN_KEY=your-password npm start
 ```
 
-Orders are written to `data/orders.json` (`ORDERS_PATH` overrides that file). `npm test` checks page serving, saving an order, and building the buying list.
+Orders are written to `data/orders.json`. `ORDERS_PATH` overrides that file. On Railway, a mounted volume is used instead, because Railway erases the normal disk on every deploy. `npm test` checks page serving, saving an order, and building the buying list.
+
+## Railway
+
+Railway runs this app. It does not have its own screen for customer orders. After the app is deployed, buying history is the order desk on that same address: `https://<your-app>.up.railway.app/admin`.
+
+The GitHub connection deploys the branch you select. `main` only contains this README. The shop is on `cursor/yoto-shop-pages-aaf0`. In the Railway service, set **Settings → Source → Branch** to `cursor/yoto-shop-pages-aaf0`.
+
+Then, in that service:
+
+1. **Variables:** set `ADMIN_KEY` to the desk password. Railway provides `PORT`; do not set it yourself.
+2. **Volumes:** add a volume and set its mount path to `/data`. The app stores `orders.json` there.
+3. **Networking:** generate a public domain. Open `/` for the shop and `/admin` for the buying history.
+
+A new push to that branch redeploys. Orders on the volume stay. Orders saved before the volume was mounted were on the temporary disk and are gone.
 
 ## JavaScript
 
@@ -30,7 +44,7 @@ Orders are written to `data/orders.json` (`ORDERS_PATH` overrides that file). `n
 | `public/app.js` | Catalog, cart, checkout, and the receipt. Reads `window.SHOP` |
 | `public/admin.js` | Order desk: login, status updates, CSV export, and the merged US buying list |
 | `server.js` | Serves the pages and the order API. Listens on `0.0.0.0` |
-| `lib/orders.js` | Validates a checkout, stores orders, and builds the buying list |
+| `lib/orders.js` | Validates a checkout, stores orders, and builds the buying list. On Railway this file is on the mounted volume |
 
 `public/index.html` is the shop. `public/admin.html` is the desk. Card-type membership is `public/data/collections.json`.
 

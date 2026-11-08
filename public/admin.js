@@ -230,18 +230,23 @@
   }
 
   // 已收訂金的訂單 → 合併成要在美國官網下單的清單
-  function buyView() {
+  function buyRows() {
     const src = orders.filter((o) => BUY_STATUSES.includes(o.status));
     const map = new Map();
-    src.forEach((o) => o.items.forEach((l) => {
+    src.forEach((o) => (o.items || []).forEach((l) => {
       const k = l.handle + "|" + (l.variant || "");
       const m = map.get(k) || { ...l, qty: 0, from: [] };
       m.qty += l.qty; m.from.push(o.name.replace(/（示範）/, ""));
       map.set(k, m);
     }));
     const rows = [...map.values()].sort((a, b) => b.usd * b.qty - a.usd * a.qty);
-    const totalUsd = rows.reduce((s, r) => s + r.usd * r.qty, 0);
+    return { src, rows, totalUsd: rows.reduce((s, r) => s + r.usd * r.qty, 0) };
+  }
+
+  function buyView() {
+    const { src, rows, totalUsd } = buyRows();
     return `<p class="buy-note">狀態為「${BUY_STATUSES.join("、")}」的 ${src.length} 筆訂單，合併後要在美國官網購買的商品。下單後記得把這些訂單改成「已向官網下單」。</p>
+      <div class="bar"><button class="btn" id="csvBuy" type="button">匯出採購 CSV</button></div>
       <div class="tbl buy">
         <div class="row head"><span></span><span>商品</span><span class="num">數量</span><span class="num">單價</span><span class="num">小計 (USD)</span><span>官網</span></div>
         ${rows.length ? rows.map((r) => `<div class="row">
@@ -287,6 +292,7 @@
     const st = e.target.closest("[data-st]"); if (st) { ui.status = st.dataset.st; return render(); }
     if (e.target.id === "csv") return exportCsv();
     if (e.target.id === "csvItems") return exportItemsCsv();
+    if (e.target.id === "csvBuy") return exportBuyCsv();
     const del = e.target.closest("[data-del]");
     if (del) {
       const no = del.closest("[data-detail]")?.dataset.detail;
@@ -399,6 +405,15 @@
       ]);
     });
     downloadCsv(`orders-${new Date().toISOString().slice(0, 10)}.csv`, head, rows);
+  }
+
+  function exportBuyCsv() {
+    const head = ["商品", "款式", "數量", "美金單價", "美金小計", "客人", "官網"];
+    const rows = buyRows().rows.map((r) => [
+      r.title, r.variant || "", r.qty, r.usd, Number(r.usd) * r.qty, r.from.join("、"),
+      `https://us.yotoplay.com/products/${encodeURIComponent(r.handle || "")}`,
+    ]);
+    downloadCsv(`buying-${new Date().toISOString().slice(0, 10)}.csv`, head, rows);
   }
 
   function exportItemsCsv() {

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="favicon.ico" />
+  <title>kokola 育兒購物</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-in">
+      <a href="#" class="logo"><span id="shopName"></span><em id="shopBadge"></em></a>
+      <nav class="top-nav">
+        <a href="#shop" data-jump="device">播放器</a>
+        <a href="#shop" data-jump="card">故事卡</a>
+        <a href="#shop" data-jump="acc">配件</a>
+        <a href="#how">購買流程</a>
+      </nav>
+      <button class="cart-btn" id="cartOpen" aria-label="購物車">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 2H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
+        <b id="cartCount">0</b>
+      </button>
+    </div>
+  </header>
+
+  <div class="ticker"><div class="ticker-track" id="ticker"></div></div>
+
+  <section class="hero">
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <span class="eyebrow" id="heroName"></span>
+        <span class="stamp">SALE</span>
+        <h1>Yoto 美國官網特價<br><mark>直送台灣</mark></h1>
+        <p>價格自動同步美國官網，官網的折扣，你也買得到。<br>固定匯率、價格透明。</p>
+        <div class="hero-cta">
+          <a href="#shop" class="btn btn-dark">開始逛</a>
+          <a href="#how" class="btn btn-line">怎麼買？</a>
+        </div>
+      </div>
+      <div class="hero-feature" id="featured"></div>
+    </div>
+  </section>
+
+  <section class="how" id="how">
+    <div class="wrap">
+      <p class="how-kicker">HOW IT WORKS</p>
+      <h2>5 步驟完成代購</h2>
+      <ol class="flow">
+        <li class="flow-step">
+          <div class="flow-icon"><svg viewBox="0 0 48 48"><path d="M8 12h30l-4 18H13z"/><path d="M8 12 6 6H2"/><circle cx="16" cy="38" r="3"/><circle cx="32" cy="38" r="3"/><path d="m18 21 4 4 8-8"/></svg></div>
+          <span class="flow-no">01</span>
+          <h3><em>選</em>商品</h3>
+          <p id="ruleText"></p>
+          <p class="flow-badge">無另外再收取代購費用</p>
+        </li>
+        <li class="flow-step">
+          <div class="flow-icon"><svg viewBox="0 0 48 48"><rect x="10" y="5" width="28" height="38" rx="3"/><path d="M17 15h14M17 22h14M17 29h8"/><path d="m28 36 3 3 6-7"/></svg></div>
+          <span class="flow-no">02</span>
+          <h3><em>填</em>資料</h3>
+          <p>姓名、手機、LINE ID、Email、7-11 賣貨便門市</p>
+        </li>
+        <li class="flow-step">
+          <div class="flow-icon"><svg viewBox="0 0 48 48"><rect x="4" y="12" width="40" height="24" rx="3"/><circle cx="24" cy="24" r="6"/><path d="M10 18v12M38 18v12"/></svg></div>
+          <span class="flow-no">03</span>
+          <h3><em>匯</em>訂金</h3>
+          <p id="depositText"></p>
+        </li>
+        <li class="flow-step">
+          <div class="flow-icon"><svg viewBox="0 0 48 48"><path d="M6 10h36v22H20l-9 8v-8H6z"/><path d="M15 21h2M23 21h2M31 21h2"/></svg></div>
+          <span class="flow-no">04</span>
+          <h3><em>私</em>官帳</h3>
+          <p>通知 LINE 官方帳號匯款末五碼後，立即向美國官網下單</p>
+          <div class="line-mini" id="lineStep"></div>
+        </li>
+        <li class="flow-gap" aria-hidden="true"><span>✈︎ 約 1 個月</span></li>
+        <li class="flow-step">
+          <div class="flow-icon"><svg viewBox="0 0 48 48"><path d="M6 15 24 6l18 9v20l-18 9-18-9z"/><path d="m6 15 18 9 18-9M24 24v20"/><path d="m15 10.5 18 9"/></svg></div>
+          <span class="flow-no">05</span>
+          <h3><em>取</em>包裹</h3>
+          <p>貨品約 1 個月後抵台，會先私訊 LINE 確認內容，即可寄出包裹</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <main class="shop" id="shop">
+    <div class="wrap">
+      <div class="shop-head">
+        <h2>全部商品</h2>
+        <p class="rate-note" id="rateNote"></p>
+      </div>
+
+      <div class="toolbar">
+        <div class="tabs" id="tabs">
+          <button data-cat="all" class="on">全部</button>
+          <button data-cat="sale">🔥 特價中</button>
+          <button data-cat="player">播放器</button>
+          <button data-cat="combo">播放器組合</button>
+          <button data-cat="single">故事卡</button>
+          <button data-cat="pack">卡片套組</button>
+          <button data-cat="acc">原廠配件</button>
+          <button data-cat="tp">副廠配件</button>
+        </div>
+        <div class="ages" id="ages">
+          <span>依年齡推薦故事卡：</span>
+          <button data-age="" class="on">不限</button>
+          <button data-age="0-2">0–2 歲</button>
+          <button data-age="3-5">3–5 歲</button>
+          <button data-age="6-8">6–8 歲</button>
+          <button data-age="9+">9 歲以上</button>
+        </div>
+        <div class="ages" id="themes">
+          <span>卡片類型：</span>
+          <div class="scroller" id="themeList"></div>
+        </div>
+        <div class="filters">
+          <div class="search">
+            <input id="q" type="search" placeholder="Find your card!" />
+            <div class="quick" id="quick"></div>
+          </div>
+          <select id="lang" aria-label="語言">
+            <option value="english">英文商品</option>
+            <option value="">所有語言</option>
+            <option value="spanish">西班牙文</option>
+            <option value="french">法文</option>
+          </select>
+          <select id="sort">
+            <option value="rec">推薦排序</option>
+            <option value="off">折扣最多</option>
+            <option value="asc">價格低 → 高</option>
+            <option value="desc">價格高 → 低</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="status" id="status">正在同步美國官網商品…</p>
+      <div class="grid" id="grid"></div>
+      <div class="more"><button class="btn btn-line" id="more" hidden>載入更多</button></div>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <div>
+        <strong id="footName"></strong>
+        <p>本站為個人代購服務（非 Yoto 官方網站），與 Yoto Play Ltd. 無任何關聯。商品名稱、圖片與美金價格皆即時取自 Yoto 美國官網，僅供代購參考。</p>
+      </div>
+      <div>
+        <strong>計價方式</strong>
+        <p id="footRule"></p>
+      </div>
+      <div>
+        <strong>聯絡我們</strong>
+        <p id="footContact"></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 購物車 / 結帳 -->
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h3 id="drawerTitle">購物車</h3>
+      <button class="x" id="cartClose" aria-label="關閉">×</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-foot" id="drawerFoot"></div>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

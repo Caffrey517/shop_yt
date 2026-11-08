@@ -1,4 +1,4 @@
-# 一本一本 育兒選物
+# kokola 育兒購物
 
 Storefront and order desk for the Yoto proxy shop. Product names, photos, and US-dollar prices load live from the Yoto US catalog. Checkout and the US buying list are saved by this app.
 
@@ -54,7 +54,7 @@ Day-to-day shop changes belong in this file.
 
 | Setting | Current value |
 | --- | --- |
-| Name | 一本一本 育兒選物 |
+| Name | kokola 育兒購物 |
 | Badge | Yoto 秋季特惠 10/12 結單 |
 | Players, player bundles, accessories | USD × 40 |
 | Story cards and card packs | USD × 35 + NT$100 |

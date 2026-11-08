@@ -351,9 +351,15 @@
   }
 
   function exportCsv() {
-    const head = ["訂單編號", "時間", "狀態", "末五碼", "姓名", "手機", "LINE", "Email", "門市", "商品", "合計", "訂金", "尾款", "客人備註", "內部備註"];
-    const rows = filteredOrders().map((o) => [o.orderNo, fmtTime(o.createdAt), o.status, o.last5, o.name, o.phone, o.line, o.email, o.store,
-      o.items.map((l) => `${l.title}${l.variant ? `(${l.variant})` : ""} x${l.qty}`).join("; "), o.total, o.deposit, o.rest, o.note, o.adminNote]);
+    const head = ["訂單編號", "時間", "狀態", "末五碼", "姓名", "手機", "LINE", "Email", "門市", "商品", "款式", "數量", "商品小計", "合計", "訂金", "尾款", "客人備註", "內部備註"];
+    const rows = filteredOrders().flatMap((o) => {
+      const items = o.items?.length ? o.items : [{}];
+      return items.map((l) => [
+        o.orderNo, fmtTime(o.createdAt), o.status, o.last5, o.name, o.phone, o.line, o.email, o.store,
+        l.title || "", l.variant || "", l.qty ?? "", l.now != null && l.qty != null ? l.now * l.qty : "",
+        o.total, o.deposit, o.rest, o.note, o.adminNote,
+      ]);
+    });
     const csv = "﻿" + [head, ...rows].map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));

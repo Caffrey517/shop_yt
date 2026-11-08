@@ -87,7 +87,7 @@ Catalog data comes from `https://us.yotoplay.com/products.json`. Card groups com
 
 Sign in at `/admin` with the desk password. `?demo`, or the 「示範資料」 link, opens sample orders that are not saved.
 
-Statuses: 待匯訂金, 已收訂金, 已向官網下單, 已抵台, 已寄出, 已完成, 已取消. Each row can store the transfer’s last five digits and an internal note. The list can be exported as CSV. Open a row and choose 刪除訂單 to erase that record from `data/orders.json` and from the buying list. Deletion cannot be undone.
+Statuses: 待匯訂金, 已收訂金, 已向官網下單, 已抵台, 已寄出, 已完成, 已取消. Each row can store the transfer’s last five digits and an internal note. The list can be exported as CSV, with one row per product so an order with several items is not packed into a single cell. Open a row and choose 刪除訂單 to erase that record from `data/orders.json` and from the buying list. Deletion cannot be undone.
 
 **美國官網採購清單** merges orders whose status is 已收訂金. Each row links to `https://us.yotoplay.com/products/<handle>`. After the US order is placed, change those rows to 已向官網下單 so they leave the list.
 

@@ -275,7 +275,8 @@
     $("#app").innerHTML = kpis() + `<div class="views">
         <button data-view="orders" class="${ui.view === "orders" ? "on" : ""}">訂單列表</button>
         <button data-view="buy" class="${ui.view === "buy" ? "on" : ""}">美國官網採購清單</button>
-      </div>` + (ui.view === "orders" ? ordersView() : buyView());
+        <button data-view="items" class="${ui.view === "items" ? "on" : ""}">商品統計</button>
+      </div>` + (ui.view === "orders" ? ordersView() : ui.view === "buy" ? buyView() : itemsView());
     if (ui.view === "buy") loadImgs();
   }
 
@@ -285,6 +286,7 @@
     const v = e.target.closest("[data-view]"); if (v) { ui.view = v.dataset.view; return render(); }
     const st = e.target.closest("[data-st]"); if (st) { ui.status = st.dataset.st; return render(); }
     if (e.target.id === "csv") return exportCsv();
+    if (e.target.id === "csvItems") return exportItemsCsv();
     const del = e.target.closest("[data-del]");
     if (del) {
       const no = del.closest("[data-detail]")?.dataset.detail;
@@ -350,6 +352,42 @@
       `合計：${ntd(o.total)}`, `訂金：${ntd(o.deposit)}`, `尾款：${ntd(o.rest)}`].join("\n");
   }
 
+  // 不含已取消。商品、款式、單價都相同才加總數量；價格不同就分行。
+  function itemRows() {
+    const map = new Map();
+    orders.filter((o) => o.status !== "已取消").forEach((o) => (o.items || []).forEach((l) => {
+      const now = Number(l.now) || 0;
+      const usdPrice = Number(l.usd) || 0;
+      const qty = Number(l.qty) || 0;
+      const key = [l.handle || l.title || "", l.variant || "", now, usdPrice].join("|");
+      const row = map.get(key) || { title: l.title || "", variant: l.variant || "", now, usd: usdPrice, qty: 0 };
+      row.qty += qty;
+      map.set(key, row);
+    }));
+    return [...map.values()].sort((a, b) => a.title.localeCompare(b.title, "zh-Hant") || a.variant.localeCompare(b.variant) || a.now - b.now);
+  }
+
+  function itemsView() {
+    const rows = itemRows();
+    const qty = rows.reduce((s, r) => s + r.qty, 0);
+    const twd = rows.reduce((s, r) => s + r.now * r.qty, 0);
+    return `<p class="buy-note">不含已取消的訂單。相同商品、款式、價格加總數量；價格不同則各佔一列。</p>
+      <div class="bar"><button class="btn" id="csvItems" type="button">匯出商品 CSV</button></div>
+      <div class="tbl items">
+        <div class="row head"><span>商品</span><span>款式</span><span class="num">數量</span><span class="num">台幣單價</span><span class="num">台幣小計</span><span class="num">美金單價</span><span class="num">美金小計</span></div>
+        ${rows.length ? rows.map((r) => `<div class="row">
+          <span>${esc(r.title)}</span>
+          <span>${esc(r.variant || "—")}</span>
+          <span class="num"><b>${r.qty}</b></span>
+          <span class="num">${ntd(r.now)}</span>
+          <span class="num">${ntd(r.now * r.qty)}</span>
+          <span class="num">${r.usd ? usd(r.usd) : "—"}</span>
+          <span class="num">${r.usd ? usd(r.usd * r.qty) : "—"}</span>
+        </div>`).join("") + `<div class="row"><span class="total">總計</span><span></span><span class="num total">${qty}</span><span></span><span class="num total">${ntd(twd)}</span><span></span><span></span></div>`
+        : `<p class="empty">目前沒有可統計的商品</p>`}
+      </div>`;
+  }
+
   function exportCsv() {
     const head = ["訂單編號", "時間", "狀態", "末五碼", "姓名", "手機", "LINE", "Email", "門市", "商品", "款式", "數量", "商品小計", "合計", "訂金", "尾款", "客人備註", "內部備註"];
     const rows = filteredOrders().flatMap((o) => {
@@ -360,10 +398,20 @@
         o.total, o.deposit, o.rest, o.note, o.adminNote,
       ]);
     });
+    downloadCsv(`orders-${new Date().toISOString().slice(0, 10)}.csv`, head, rows);
+  }
+
+  function exportItemsCsv() {
+    const head = ["商品", "款式", "數量", "台幣單價", "台幣小計", "美金單價", "美金小計"];
+    const rows = itemRows().map((r) => [r.title, r.variant, r.qty, r.now, r.now * r.qty, r.usd, r.usd ? r.usd * r.qty : ""]);
+    downloadCsv(`items-${new Date().toISOString().slice(0, 10)}.csv`, head, rows);
+  }
+
+  function downloadCsv(filename, head, rows) {
     const csv = "﻿" + [head, ...rows].map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    a.download = `orders-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = filename;
     a.click();
   }
 

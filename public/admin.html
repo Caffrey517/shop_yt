@@ -79,6 +79,8 @@
     .buy img { width: 48px; height: 48px; object-fit: contain; background: #f4efe6; border-radius: 8px; }
     .buy .row a { color: var(--ink); }
     .buy .total { font-weight: 900; font-size: 16px; }
+    .items .row { grid-template-columns: 1.6fr 1fr 72px 110px 110px 100px 100px; cursor: default; }
+    .items .row.head { cursor: default; }
     .empty { padding: 40px; }
 
     @media (max-width: 900px) {
@@ -92,7 +94,9 @@
       .chips button { white-space: nowrap; }
       .bar input { min-width: 0; }
       .row.head { display: none; }
-      .tbl:not(.buy) .row:not(.head) { grid-template-columns: 1fr auto; grid-template-areas: "no time" "who total" "last5 status" ; row-gap: 6px; }
+      .tbl:not(.buy):not(.items) .row:not(.head) { grid-template-columns: 1fr auto; grid-template-areas: "no time" "who total" "last5 status" ; row-gap: 6px; }
+      .items { overflow-x: auto; }
+      .items .row { min-width: 720px; }
       .row .no { grid-area: no; } .row > span:nth-child(2) { grid-area: time; color: var(--muted); font-size: 12px; }
       .row .who { grid-area: who; } .row .num:nth-child(4) { grid-area: total; font-weight: 900; }
       .row .num:nth-child(5), .row .caret { display: none; }

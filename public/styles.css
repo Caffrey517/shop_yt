@@ -289,10 +289,10 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 /* kokola layout */
 .top { background: #fff; color: var(--ink); border-bottom: 1px solid #eee; }
 .top-in { height: 72px; }
-.logo { gap: 6px; font-weight: 700; color: #222; text-decoration: none; }
-.logo-word { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.04em; }
-.logo-leaf { margin-left: -2px; }
-.logo-tag { font-size: 14px; font-weight: 500; color: #444; }
+.logo { gap: 6px; font-weight: 700; color: #222; text-decoration: none; flex-wrap: nowrap; white-space: nowrap; }
+.logo-word { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.04em; white-space: nowrap; }
+.logo-leaf { margin-left: -2px; flex: 0 0 auto; }
+.logo-tag { font-size: 14px; font-weight: 500; color: #444; white-space: nowrap; }
 .top-nav a { color: #333; opacity: 1; font-size: 14px; }
 .top-nav a:hover { color: var(--sage); }
 .cart-btn b { background: var(--sage); }
@@ -316,9 +316,9 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 .step-icon svg { width: 36px; height: 36px; fill: none; stroke: #5c5c5c; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .steps h3 { margin: 0 0 8px; font-size: 18px; font-weight: 700; }
 .steps p { margin: 0 auto; max-width: 12em; color: var(--muted); font-size: 14px; }
-.fee-note { margin-top: 48px; display: flex; align-items: center; justify-content: center; gap: 28px; }
-.fee-note img { width: 92px; height: 72px; object-fit: cover; object-position: center 20%; border-radius: 12px; }
+.fee-note { margin-top: 48px; display: flex; align-items: center; justify-content: center; }
 .fee-note p { margin: 0; font-size: 18px; font-weight: 700; color: #333; }
+.tabs button[data-cat="tp"] { display: none; }
 .fee-check { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 50%; background: #e7f6ea; color: #2f9e44; font-size: 13px; }
 .foot { background: #fff; color: var(--muted); border-top: 1px solid #eee; }
 .foot-in { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
@@ -332,7 +332,8 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 @media (max-width: 860px) {
   .top-nav { display: flex; margin-left: 0; order: 3; width: 100%; overflow-x: auto; gap: 16px; padding-bottom: 8px; }
   .top-in { flex-wrap: wrap; height: auto; padding: 10px 0 0; }
-  .cart-btn { margin-left: auto; }
+  .top .logo { flex: 0 0 auto; flex-direction: row; align-items: center; min-width: max-content; }
+  .cart-btn { margin-left: auto; margin-right: 8px; }
   .hero-in { grid-template-columns: 1fr; }
   .hero-visual { order: -1; }
   .steps { flex-direction: column; text-align: left; gap: 22px; }

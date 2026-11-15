@@ -244,6 +244,16 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 .store-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .store-row label { margin-top: 8px; }
 .form .privacy { margin: 0 0 4px; font-size: 13px; background: #ece9dc; border-radius: 10px; padding: 8px 12px; color: var(--ink); }
+.ezway { border: 1px solid #d9d9d9; border-radius: 16px; padding: 14px 14px 12px; margin: 14px 0 4px; background: #fff; }
+.ezway h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 16px; }
+.ezway p { margin: 0 0 10px; font-size: 13px; line-height: 1.55; }
+.ez-who { background: #f3f1f1; border-radius: 12px; padding: 10px 12px; color: #222; }
+.ez-who b.wait { font-weight: 500; color: #8a8a8a; }
+.ez-confirm { display: flex; gap: 10px; align-items: flex-start; border: 1px solid #e3e3e3; border-radius: 12px; padding: 10px 12px; margin: 0 0 10px; font-weight: 400; }
+.ez-confirm input { width: 18px; height: 18px; margin-top: 2px; flex: 0 0 auto; accent-color: #2f6fed; }
+.ez-confirm b { display: block; font-size: 14px; }
+.ez-confirm small { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.45; font-weight: 400; }
+.ez-help { color: #8a8a8a; font-size: 12px; margin-bottom: 0; }
 
 /* 手機頁首：店名一行、結單標籤放在店名下方（頁首高度維持 62px） */
 @media (max-width: 520px) {

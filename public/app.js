@@ -345,7 +345,7 @@
   function addToCart(p, v) {
     const hit = cart.find((l) => l.id === v.id);
     if (hit) hit.qty++;
-    else cart.push({ id: v.id, handle: p.handle, title: p.title, variant: v.title, img: p.img, usd: v.usd, now: v.now, was: v.was, qty: 1 });
+    else cart.push({ id: v.id, handle: p.handle, title: p.title, variant: v.title, img: p.img, usd: v.usd, now: v.now, was: v.was, qty: 1, cat: p.cat });
     save();
     toast(`已加入：${p.title}`);
   }
@@ -383,6 +383,38 @@
     $("#drawerFoot").innerHTML = sumHtml() + `<button class="btn btn-sale" id="goCheckout">前往結帳</button>`;
   }
 
+  function cartNeedsEzway() {
+    return cart.some((l) => {
+      const cat = l.cat || products.find((p) => p.handle === l.handle)?.cat;
+      return cat === "player" || cat === "combo";
+    });
+  }
+
+  function ezwayHtml() {
+    return `<section class="ezway" id="ezwayBox">
+      <h4><svg class="ez-ico" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#2f6fed"/><path d="M7 6.5h7.2L18 10.2V17.5H7z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 6.5V10h4" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>EZ WAY 通關確認（預購商品）</h4>
+      <p>預購商品從美國寄回台灣需要通關，買家必須本人完成「EZ WAY 易利委」App 實名認證，且資料需與以下收件人姓名、手機相同：</p>
+      <p class="ez-who">姓名：<b id="ezName"></b>　手機：<b id="ezPhone"></b></p>
+      <label class="ez-confirm">
+        <input type="checkbox" id="ezway" name="ezway" required>
+        <span><b>我已用以上姓名、手機完成 EZ WAY 實名認證</b><small>貨物進口時 EZ WAY 會推播通知，請記得在 App 按「申報相符」。</small></span>
+      </label>
+      <p class="ez-help">還沒申請？請到 App Store 或 Google Play 搜尋「EZ WAY 易利委」，下載後完成實名認證再下單。</p>
+    </section>`;
+  }
+
+  function syncEzway(form) {
+    const nameEl = $("#ezName");
+    const phoneEl = $("#ezPhone");
+    if (!nameEl || !phoneEl) return;
+    const name = form.name.value.trim();
+    const phone = form.phone.value.trim();
+    nameEl.textContent = name || "（請先填寫上方姓名）";
+    phoneEl.textContent = phone || "（請先填寫上方手機）";
+    nameEl.classList.toggle("wait", !name);
+    phoneEl.classList.toggle("wait", !phone);
+  }
+
   function showCheckout() {
     $("#drawerTitle").textContent = "填寫訂購資料";
     const saved = (() => { try { return JSON.parse(localStorage.getItem("yoto-buyer")) || {}; } catch { return {}; } })();
@@ -404,13 +436,15 @@
           <div>${f("storeId", "門市店號", 'inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="6 碼數字"')}</div>
         </div>
       </fieldset>
+      ${cartNeedsEzway() ? ezwayHtml() : ""}
       <label for="note">備註（選填）</label><textarea id="note" name="note" rows="2" maxlength="300"></textarea>
     </form>`;
     $("#drawerFoot").innerHTML = sumHtml() + `<button class="btn btn-sale" type="submit" form="orderForm">送出訂單</button><button class="btn" id="backCart">返回購物車</button>`;
     const form = $("#orderForm");
     // 手機、店號只留數字（客人打 0912-345-678 也能自動整理）
-    ["phone", "storeId"].forEach((n) => form[n].addEventListener("input", (e) => { e.target.value = e.target.value.replace(/\D/g, ""); }));
-    form.querySelectorAll("input").forEach((el) => el.addEventListener("input", () => { el.setCustomValidity(""); el.classList.remove("bad"); }));
+    ["phone", "storeId"].forEach((n) => form[n].addEventListener("input", (e) => { e.target.value = e.target.value.replace(/\D/g, ""); syncEzway(form); }));
+    form.querySelectorAll("input").forEach((el) => el.addEventListener("input", () => { el.setCustomValidity(""); el.classList.remove("bad"); syncEzway(form); }));
+    syncEzway(form);
     form.addEventListener("submit", submitOrder);
   }
 
@@ -421,6 +455,7 @@
     email: "Email 格式不正確，需包含 @（例如 name@example.com）",
     storeName: "請填寫 7-11 門市名稱",
     storeId: "門市店號為 6 碼數字，可在 7-11 電子地圖查詢",
+    ezway: "請確認已用上方姓名、手機完成 EZ WAY 實名認證",
   };
   function validate(form) {
     let first = null;
@@ -438,6 +473,8 @@
     e.preventDefault();
     if (!validate(e.target)) return;
     const buyer = Object.fromEntries(new FormData(e.target));
+    const ezway = buyer.ezway === "on";
+    delete buyer.ezway;
     buyer.store = `${buyer.storeName}（店號 ${buyer.storeId}）`;
     try { localStorage.setItem("yoto-buyer", JSON.stringify({ ...buyer, note: "" })); } catch {}
     const t = totals();
@@ -445,6 +482,7 @@
     const text = [
       `【${S.name} 訂單 ${orderNo}】`,
       `姓名：${buyer.name}`, `手機：${buyer.phone}`, `LINE：${buyer.line}`, `Email：${buyer.email}`, `7-11 門市：${buyer.store}`,
+      ezway ? "EZ WAY：已用此姓名與手機完成實名認證" : null,
       buyer.note ? `備註：${buyer.note}` : null,
       "", "— 商品 —",
       ...cart.map((l) => `・${l.title}${l.variant ? `（${l.variant}）` : ""} × ${l.qty}　${ntd(l.now * l.qty)}`),
@@ -457,7 +495,7 @@
         res = await fetch(S.orderWebhookUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderNo, ...buyer, items: cart, ...t, text }),
+          body: JSON.stringify({ orderNo, ...buyer, ezway, items: cart, ...t, text }),
         });
       } catch {
         toast("訂單沒有送出，請檢查網路後再試");

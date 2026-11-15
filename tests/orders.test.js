@@ -79,6 +79,7 @@ test("an order is stored and appears on the buying list after the deposit is mar
   assert.equal(listed.orders.length, 1);
   assert.equal(listed.orders[0].status, "待匯訂金");
   assert.equal(listed.orders[0].deposit, 480);
+  assert.equal(listed.orders[0].ezway, false);
 
   const emptyList = await fetch(`${base}/api/buying-list?key=test-key`).then((res) => res.json());
   assert.equal(emptyList.count, 0);
@@ -153,4 +154,16 @@ test("bad checkout data is rejected", async () => {
   assert.equal(res.status, 400);
   const body = await res.json();
   assert.match(body.error, /手機/);
+});
+
+test("an EZ WAY confirmation is stored with the order", async () => {
+  const created = await fetch(`${base}/api/orders`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ ...sample, orderNo: "Y261106EZWAY", ezway: true }),
+  });
+  assert.equal(created.status, 201);
+  const listed = await fetch(`${base}/api/orders?key=test-key`).then((res) => res.json());
+  const order = listed.orders.find((item) => item.orderNo === "Y261106EZWAY");
+  assert.equal(order.ezway, true);
 });

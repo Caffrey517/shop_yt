@@ -221,6 +221,7 @@
             <dt>LINE</dt><dd>${esc(o.line)}</dd>
             <dt>7-11 門市</dt><dd>${esc(o.store)}</dd>
             ${o.note ? `<dt>客人備註</dt><dd>${esc(o.note)}</dd>` : ""}
+            ${o.ezway ? `<dt>EZ WAY</dt><dd>已用此姓名與手機完成實名認證</dd>` : ""}
           </dl>
           <h5>內部備註</h5>
           <textarea data-f="adminNote" rows="2" placeholder="例如：US 訂單編號、追蹤碼">${esc(o.adminNote)}</textarea>
@@ -353,9 +354,10 @@
   }
 
   function orderText(o) {
-    return [`【${S.name} 訂單 ${o.orderNo}】`, `姓名：${o.name}`, `手機：${o.phone}`, `LINE：${o.line}`, `7-11 門市：${o.store}`, "",
+    return [`【${S.name} 訂單 ${o.orderNo}】`, `姓名：${o.name}`, `手機：${o.phone}`, `LINE：${o.line}`, `7-11 門市：${o.store}`,
+      o.ezway ? "EZ WAY：已用此姓名與手機完成實名認證" : null, "",
       ...o.items.map((l) => `・${l.title}${l.variant ? `（${l.variant}）` : ""} × ${l.qty}　${ntd(l.now * l.qty)}`), "",
-      `合計：${ntd(o.total)}`, `訂金：${ntd(o.deposit)}`, `尾款：${ntd(o.rest)}`].join("\n");
+      `合計：${ntd(o.total)}`, `訂金：${ntd(o.deposit)}`, `尾款：${ntd(o.rest)}`].filter((x) => x !== null).join("\n");
   }
 
   // 不含已取消。商品、款式、單價都相同才加總數量；價格不同就分行。

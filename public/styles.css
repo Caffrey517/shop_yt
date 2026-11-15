@@ -290,6 +290,8 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 .top { background: #fff; color: var(--ink); border-bottom: 1px solid #eee; }
 .top-in { height: 72px; }
 .logo { gap: 6px; font-weight: 700; color: #222; text-decoration: none; flex-wrap: nowrap; white-space: nowrap; }
+.logo-lines, .logo-sub { display: contents; }
+.logo-mark { display: none; }
 .logo-word { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.04em; white-space: nowrap; }
 .logo-leaf { margin-left: -2px; flex: 0 0 auto; }
 .logo-tag { font-size: 14px; font-weight: 500; color: #444; white-space: nowrap; }
@@ -333,7 +335,14 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 @media (max-width: 860px) {
   .top-nav { display: flex; margin-left: 0; order: 3; width: 100%; overflow-x: auto; gap: 16px; padding-bottom: 8px; }
   .top-in { flex-wrap: wrap; height: auto; padding: 10px 0 0; }
-  .top .logo { flex: 0 0 auto; flex-direction: row; align-items: center; min-width: max-content; }
+  .top .logo { flex: 0 0 auto; flex-direction: row; align-items: center; min-width: 0; gap: 8px; font-size: 16px; }
+  .top .logo-mark { display: block; width: 2.2em; height: 2.2em; border-radius: 50%; object-fit: cover; flex: 0 0 auto; }
+  .top .logo-lines, .top .logo-sub { display: flex; }
+  .top .logo-lines { flex-direction: column; align-items: flex-start; justify-content: center; gap: 1px; height: 2.2em; line-height: 1.1; }
+  .top .logo-sub { align-items: center; gap: 3px; }
+  .top .logo-word { font-size: 1em; line-height: 1.1; }
+  .top .logo-tag { font-size: 0.82em; line-height: 1.1; }
+  .top .logo-leaf { width: 0.85em; height: 0.85em; margin: 0; }
   .cart-btn { margin-left: auto; margin-right: 8px; }
   .hero-in { grid-template-columns: 1fr; }
   .hero-visual { order: -1; }

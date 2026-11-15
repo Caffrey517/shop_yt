@@ -45,14 +45,10 @@
 
   // ---------- 文字帶入 ----------
   const d = S.pricing.device, c = S.pricing.card;
-  const ruleLine = `播放器／配件：美金 × ${d.rate}${d.plus ? ` + ${d.plus}` : ""}；故事卡／卡片套組：美金 × ${c.rate} + ${c.plus} 元`;
-  $("#shopName").textContent = S.name;
-  $("#footName").textContent = S.name;
-  $("#shopBadge").textContent = S.badge || "";
+  const brandTag = (S.name || "").replace(/^kokola\s*/i, "");
+  document.querySelectorAll(".logo-tag").forEach((el) => { el.textContent = brandTag; });
   document.title = S.name;
-  $("#ruleText").innerHTML = `商品價格＝<br>播放器／配件：美金 × ${d.rate}${d.plus ? ` + ${d.plus}` : ""}；<br>故事卡／卡片套組：美金 × ${c.rate} + ${c.plus} 元`;
-  $("#footRule").textContent = ruleLine + `。無另外再收取代購費用。下單需先付 ${S.depositRate * 100}% 訂金，尾款取貨時付清。`;
-  $("#depositText").textContent = `匯款 ${S.depositRate * 100}% 訂金，尾款於取貨時付清`;
+  if ($("#depositText")) $("#depositText").innerHTML = `依訂單金額<br>支付 ${S.depositRate * 100}% 訂金，<br>尾款於取貨時結清`;
   // LINE 官方帳號（@開頭）與個人 ID 的加好友連結格式不同
   const lineUrl = "https://line.me/R/ti/p/" + (S.lineId.startsWith("@") ? encodeURIComponent(S.lineId) : "~" + encodeURIComponent(S.lineId));
   // LINE 官方帳號的 QR Code 由 LINE 提供（個人 ID 沒有這個網址，就不顯示 QR）
@@ -74,8 +70,8 @@
       </div>
     </div>`;
   }
-  $("#footContact").textContent = (S.lineId.startsWith("@") ? "LINE 官方帳號：" : "LINE ID：") + S.lineId;
-  $("#heroName").textContent = S.name;
+  const footLine = $("#footLine");
+  if (footLine) footLine.href = lineUrl;
   $("#rateNote").textContent = `固定匯率・播放器 ${d.rate}／卡片 ${c.rate}+${c.plus}`;
 
   // ---------- 抓官網商品 ----------
@@ -223,8 +219,10 @@
   }
 
   function renderFeatured() {
+    const box = $("#featured");
+    if (!box) return;
     const items = S.featured.map((h) => products.find((p) => p.handle === h)).filter(Boolean);
-    $("#featured").innerHTML = items.map((p) => {
+    box.innerHTML = items.map((p) => {
       const v = best(p);
       return `<div class="feat card" data-handle="${esc(p.handle)}">
         ${offPct(v) ? `<span class="tag tag-off">-${offPct(v)}%</span>` : ""}
@@ -266,7 +264,7 @@
       return;
     }
     const jump = e.target.closest("[data-jump]");
-    if (jump) setCat({ device: "player", card: "single", acc: "acc" }[jump.dataset.jump]);
+    if (jump) setCat(jump.dataset.jump);
   });
 
   const AGE_CATS = ["all", "sale", "single", "pack"];

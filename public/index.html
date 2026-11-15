@@ -7,18 +7,19 @@
   <title>kokola 育兒購物</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="top">
     <div class="wrap top-in">
-      <a href="#" class="logo"><span id="shopName"></span><em id="shopBadge"></em></a>
+      <a href="#" class="logo"><span class="logo-word">kokola</span><svg class="logo-leaf" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="#6f8f4e" d="M14 1.5C8.2 2.4 3.6 6.6 2.4 12.2 7.2 11 11.2 7.4 14 1.5z"/><path d="M3.2 11.2c2.2 1.6 4.8 2.8 8 3" fill="none" stroke="#6f8f4e" stroke-width="1.2" stroke-linecap="round"/></svg><span class="logo-tag" id="shopTag"></span></a>
       <nav class="top-nav">
-        <a href="#shop" data-jump="device">播放器</a>
-        <a href="#shop" data-jump="card">故事卡</a>
+        <a href="#shop" data-jump="player">播放器</a>
+        <a href="#shop" data-jump="combo">播放器組合</a>
+        <a href="#shop" data-jump="single">故事卡</a>
+        <a href="#shop" data-jump="pack">卡片套組</a>
         <a href="#shop" data-jump="acc">配件</a>
-        <a href="#how">購買流程</a>
       </nav>
       <button class="cart-btn" id="cartOpen" aria-label="購物車">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 2H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
@@ -32,58 +33,52 @@
   <section class="hero">
     <div class="wrap hero-in">
       <div class="hero-copy">
-        <span class="eyebrow" id="heroName"></span>
-        <span class="stamp">SALE</span>
-        <h1>Yoto 美國官網特價<br><mark>直送台灣</mark></h1>
-        <p>價格自動同步美國官網，官網的折扣，你也買得到。<br>固定匯率、價格透明。</p>
+        <h1>讓故事與音樂，<br>陪伴孩子的每一段時光</h1>
+        <p>Yoto 美國官網代購｜精選故事・音樂・學習內容</p>
         <div class="hero-cta">
-          <a href="#shop" class="btn btn-dark">開始逛</a>
-          <a href="#how" class="btn btn-line">怎麼買？</a>
+          <a href="#shop" class="btn btn-sage">探索商品 →</a>
+          <a href="#how" class="btn btn-ghost">訂購流程</a>
         </div>
       </div>
-      <div class="hero-feature" id="featured"></div>
+      <div class="hero-visual">
+        <img src="hero-player.jpg" alt="Yoto 播放器放在淺色桌面上">
+      </div>
     </div>
   </section>
 
   <section class="how" id="how">
     <div class="wrap">
-      <p class="how-kicker">HOW IT WORKS</p>
-      <h2>5 步驟完成代購</h2>
-      <ol class="flow">
-        <li class="flow-step">
-          <div class="flow-icon"><svg viewBox="0 0 48 48"><path d="M8 12h30l-4 18H13z"/><path d="M8 12 6 6H2"/><circle cx="16" cy="38" r="3"/><circle cx="32" cy="38" r="3"/><path d="m18 21 4 4 8-8"/></svg></div>
-          <span class="flow-no">01</span>
-          <h3><em>選</em>商品</h3>
-          <p id="ruleText"></p>
-          <p class="flow-badge">無另外再收取代購費用</p>
+      <h2>訂購流程</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-no">01</span>
+          <div class="step-icon"><svg viewBox="0 0 48 48"><path d="M8 14h30l-3 16H12z"/><path d="M8 14 6 8H3"/><circle cx="16" cy="38" r="2.5"/><circle cx="32" cy="38" r="2.5"/></svg></div>
+          <h3>選商品</h3>
+          <p>選擇主機、配件<br>與喜愛的故事卡</p>
         </li>
-        <li class="flow-step">
-          <div class="flow-icon"><svg viewBox="0 0 48 48"><rect x="10" y="5" width="28" height="38" rx="3"/><path d="M17 15h14M17 22h14M17 29h8"/><path d="m28 36 3 3 6-7"/></svg></div>
-          <span class="flow-no">02</span>
-          <h3><em>填</em>資料</h3>
-          <p>姓名、手機、LINE ID、Email、7-11 賣貨便門市</p>
+        <li>
+          <span class="step-no">02</span>
+          <div class="step-icon"><svg viewBox="0 0 48 48"><rect x="12" y="6" width="24" height="34" rx="3"/><path d="M18 16h12M18 23h12M18 30h8"/></svg></div>
+          <h3>填寫訂單</h3>
+          <p>提供收件姓名、<br>電話、超商門市<br>與聯絡資訊</p>
         </li>
-        <li class="flow-step">
-          <div class="flow-icon"><svg viewBox="0 0 48 48"><rect x="4" y="12" width="40" height="24" rx="3"/><circle cx="24" cy="24" r="6"/><path d="M10 18v12M38 18v12"/></svg></div>
-          <span class="flow-no">03</span>
-          <h3><em>匯</em>訂金</h3>
-          <p id="depositText"></p>
+        <li>
+          <span class="step-no">03</span>
+          <div class="step-icon"><svg viewBox="0 0 48 48"><rect x="6" y="14" width="36" height="22" rx="3"/><path d="M6 20h36"/></svg></div>
+          <h3>支付訂金</h3>
+          <p id="depositText">依訂單金額<br>支付 20% 訂金，<br>尾款於取貨時結清</p>
         </li>
-        <li class="flow-step">
-          <div class="flow-icon"><svg viewBox="0 0 48 48"><path d="M6 10h36v22H20l-9 8v-8H6z"/><path d="M15 21h2M23 21h2M31 21h2"/></svg></div>
-          <span class="flow-no">04</span>
-          <h3><em>私</em>官帳</h3>
-          <p>通知 LINE 官方帳號匯款末五碼後，立即向美國官網下單</p>
-          <div class="line-mini" id="lineStep"></div>
-        </li>
-        <li class="flow-gap" aria-hidden="true"><span>✈︎ 約 1 個月</span></li>
-        <li class="flow-step">
-          <div class="flow-icon"><svg viewBox="0 0 48 48"><path d="M6 15 24 6l18 9v20l-18 9-18-9z"/><path d="m6 15 18 9 18-9M24 24v20"/><path d="m15 10.5 18 9"/></svg></div>
-          <span class="flow-no">05</span>
-          <h3><em>取</em>包裹</h3>
-          <p>貨品約 1 個月後抵台，會先私訊 LINE 確認內容，即可寄出包裹</p>
+        <li>
+          <span class="step-no">04</span>
+          <div class="step-icon step-line">LINE</div>
+          <h3>加入 LINE</h3>
+          <p>傳送訂單編號，<br>後續付款確認、<br>採購進度與到貨通知<br>都會在 LINE 與你聯繫</p>
         </li>
       </ol>
+      <div class="fee-note">
+        <img src="hero-player.jpg" alt="">
+        <p><span class="fee-check" aria-hidden="true">✓</span>無另外再收取代購費用</p>
+      </div>
     </div>
   </section>
 
@@ -145,18 +140,11 @@
 
   <footer class="foot">
     <div class="wrap foot-in">
-      <div>
-        <strong id="footName"></strong>
-        <p>本站為個人代購服務（非 Yoto 官方網站），與 Yoto Play Ltd. 無任何關聯。商品名稱、圖片與美金價格皆即時取自 Yoto 美國官網，僅供代購參考。</p>
+      <div class="foot-brand">
+        <div class="logo"><span class="logo-word">kokola</span><svg class="logo-leaf" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="#6f8f4e" d="M14 1.5C8.2 2.4 3.6 6.6 2.4 12.2 7.2 11 11.2 7.4 14 1.5z"/><path d="M3.2 11.2c2.2 1.6 4.8 2.8 8 3" fill="none" stroke="#6f8f4e" stroke-width="1.2" stroke-linecap="round"/></svg><span class="logo-tag" id="footTag"></span></div>
+        <p>為孩子挑選世界各地的優質選物，<br>讓日常更有故事、學習與陪伴。</p>
       </div>
-      <div>
-        <strong>計價方式</strong>
-        <p id="footRule"></p>
-      </div>
-      <div>
-        <strong>聯絡我們</strong>
-        <p id="footContact"></p>
-      </div>
+      <a class="foot-line" id="footLine" target="_blank" rel="noopener">加入 LINE 官方帳號</a>
     </div>
   </footer>
 

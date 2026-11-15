@@ -346,7 +346,7 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 @media (max-width: 860px) {
   .top-nav { display: flex; margin-left: 0; order: 3; width: 100%; overflow-x: auto; gap: 16px; padding-bottom: 8px; }
   .top-in { flex-wrap: wrap; height: auto; padding: 10px 0 0; }
-  .top .logo { flex: 0 1 auto; flex-direction: row; align-items: center; min-width: 0; gap: 8px; padding: 6px 12px 6px 10px; }
+  .top .logo { flex: 0 1 auto; flex-direction: row; align-items: center; min-width: 0; gap: 8px; background: transparent; border-radius: 0; padding: 0; }
   .top .logo-brand { font-size: 22px; }
   .top .logo-tag { font-size: 14px; }
   .cart-btn { margin-left: auto; margin-right: 8px; }

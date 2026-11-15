@@ -422,7 +422,6 @@
     const f = (id, label, attrs = "", hint = "") => `<label for="${id}">${label} <span class="req">*</span></label>
       <input id="${id}" name="${id}" required ${attrs} value="${esc(saved[id] || "")}">${hint ? `<div class="hint">${hint}</div>` : ""}`;
     $("#drawerBody").innerHTML = `<form class="form" id="orderForm" novalidate>
-      <p class="privacy">🔒 以下個人資料<b>僅供聯繫訂單使用</b>，不做其他用途。</p>
       ${f("name", "姓名", 'autocomplete="name" maxlength="30"')}
       ${f("phone", "手機", 'type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" pattern="09[0-9]{8}" placeholder="09XXXXXXXX"', "10 碼數字，例如 0912345678")}
       ${f("line", "LINE ID", 'maxlength="40"', "方便我們用 LINE 和你確認訂單")}

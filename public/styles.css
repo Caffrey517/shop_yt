@@ -289,12 +289,12 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 /* kokola layout */
 .top { background: #fff; color: var(--ink); border-bottom: 1px solid #eee; }
 .top-in { height: 72px; }
-.logo { gap: 6px; font-weight: 700; color: #222; text-decoration: none; flex-wrap: nowrap; white-space: nowrap; }
-.logo-lines, .logo-sub { display: contents; }
-.logo-mark { display: none; }
-.logo-word { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -.04em; white-space: nowrap; }
-.logo-leaf { margin-left: -2px; flex: 0 0 auto; }
-.logo-tag { font-size: 14px; font-weight: 500; color: #444; white-space: nowrap; }
+.logo { gap: 10px; font-weight: 700; color: #4d4036; text-decoration: none; flex-wrap: nowrap; white-space: nowrap; }
+.logo-brand { display: inline-flex; align-items: center; flex: 0 0 auto; white-space: nowrap; }
+.logo-word { font-family: "Nunito", "Noto Sans TC", sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -.045em; line-height: 1; color: #4d4036; white-space: nowrap; }
+.logo-leaf { width: 1.15em; height: 1.15em; margin: 0 1px 0 1px; flex: 0 0 auto; }
+.logo-tag { font-family: "Noto Sans TC", sans-serif; font-size: 16px; font-weight: 500; letter-spacing: .06em; color: #5c4d42; white-space: nowrap; }
+.top .logo { background: #f4efe6; border-radius: 999px; padding: 7px 16px 7px 14px; }
 .top-nav a { color: #333; opacity: 1; font-size: 14px; }
 .top-nav a:hover { color: var(--sage); }
 .cart-btn b { background: var(--sage); }
@@ -341,14 +341,9 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 @media (max-width: 860px) {
   .top-nav { display: flex; margin-left: 0; order: 3; width: 100%; overflow-x: auto; gap: 16px; padding-bottom: 8px; }
   .top-in { flex-wrap: wrap; height: auto; padding: 10px 0 0; }
-  .top .logo { flex: 0 0 auto; flex-direction: row; align-items: center; min-width: 0; gap: 8px; font-size: 16px; }
-  .top .logo-mark { display: block; width: 2.2em; height: 2.2em; border-radius: 50%; object-fit: cover; flex: 0 0 auto; }
-  .top .logo-lines, .top .logo-sub { display: flex; }
-  .top .logo-lines { flex-direction: column; align-items: flex-start; justify-content: center; gap: 1px; height: 2.2em; line-height: 1.1; }
-  .top .logo-sub { align-items: center; gap: 3px; }
-  .top .logo-word { font-size: 1em; line-height: 1.1; }
-  .top .logo-tag { font-size: 0.82em; line-height: 1.1; }
-  .top .logo-leaf { width: 0.85em; height: 0.85em; margin: 0; }
+  .top .logo { flex: 0 1 auto; flex-direction: row; align-items: center; min-width: 0; gap: 8px; padding: 6px 12px 6px 10px; }
+  .top .logo-word { font-size: 22px; }
+  .top .logo-tag { font-size: 14px; }
   .cart-btn { margin-left: auto; margin-right: 8px; }
   .hero-banner .hero-wide { display: none; }
   .hero-banner .hero-phone { display: block; height: 240px; object-fit: cover; object-position: center 30%; }

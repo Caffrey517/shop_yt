@@ -318,7 +318,8 @@ h1, h2, h3, h4, h5, .logo, .btn, .tabs button, .ages button, .quick button, .add
 .steps p { margin: 0 auto; max-width: 12em; color: var(--muted); font-size: 14px; }
 .fee-note { margin-top: 48px; display: flex; align-items: center; justify-content: center; }
 .fee-note p { margin: 0; font-size: 18px; font-weight: 700; color: #333; }
-.tabs button[data-cat="tp"] { display: none; }
+.tabs button[data-cat="tp"],
+.tabs button[data-cat="sale"] { display: none; }
 .fee-check { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 50%; background: #e7f6ea; color: #2f9e44; font-size: 13px; }
 .foot { background: #fff; color: var(--muted); border-top: 1px solid #eee; }
 .foot-in { display: flex; align-items: center; justify-content: space-between; gap: 24px; }

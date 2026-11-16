@@ -165,6 +165,7 @@ button { font: inherit; cursor: pointer; }
 .sum { display: flex; justify-content: space-between; margin: 4px 0; }
 .sum.big { font-size: 20px; font-weight: 900; }
 .sum.dep { color: var(--sale); font-weight: 700; }
+.ship-note { margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
 .drawer-foot .btn { width: 100%; text-align: center; margin-top: 10px; }
 .player-limit { margin: 10px 0 0; color: var(--sale); font-weight: 700; font-size: 14px; }
 .form label { display: block; font-size: 13px; font-weight: 700; margin: 12px 0 4px; }

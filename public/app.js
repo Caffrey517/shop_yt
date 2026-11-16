@@ -28,7 +28,7 @@
   }
   function rateNote(rate) {
     const link = `<a href="${FX_URL}" target="_blank" rel="noopener">即期匯率</a>`;
-    return `美國售價*${rate ? esc(rate) : ""}(${link})+20%代購費(含運費、手續費等)`;
+    return `美國售價*${rate ? esc(rate) : ""}(${link})+20%代購費(含國際運費、手續費等)`;
   }
 
   let products = [];
@@ -372,7 +372,8 @@
     return `${t.saved > 0 ? `<div class="sum" style="color:var(--sale)"><span>官網特價共省</span><span>-${ntd(t.saved)}</span></div>` : ""}
       <div class="sum big"><span>合計</span><span>${ntd(t.total)}</span></div>
       <div class="sum dep"><span>應付訂金（${S.depositRate * 100}%）</span><span>${ntd(t.deposit)}</span></div>
-      <div class="sum"><span>尾款（取貨時付）</span><span>${ntd(t.rest)}</span></div>`;
+      <div class="sum"><span>尾款（取貨時付）</span><span>${ntd(t.rest)}</span></div>
+      <p class="ship-note">台灣段以賣貨便出貨，運費38元，有免運券則免運費。</p>`;
   }
 
   function showCart() {

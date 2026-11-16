@@ -167,3 +167,37 @@ test("an EZ WAY confirmation is stored with the order", async () => {
   const order = listed.orders.find((item) => item.orderNo === "Y261106EZWAY");
   assert.equal(order.ezway, true);
 });
+
+test("a card-only order can be stored without buyer details", async () => {
+  const created = await fetch(`${base}/api/orders`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      ...sample,
+      orderNo: "Y261106CARD1",
+      name: "",
+      phone: "",
+      line: "",
+      email: "",
+      store: "",
+      items: [{ ...sample.items[0], title: "Story Card", cat: "single" }],
+    }),
+  });
+  assert.equal(created.status, 201);
+});
+
+test("a player order still requires buyer details", async () => {
+  const created = await fetch(`${base}/api/orders`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      ...sample,
+      orderNo: "Y261106PLAY1",
+      name: "",
+      items: [{ ...sample.items[0], cat: "player" }],
+    }),
+  });
+  assert.equal(created.status, 400);
+  const body = await created.json();
+  assert.match(body.error, /姓名/);
+});

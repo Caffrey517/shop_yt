@@ -380,7 +380,8 @@
           ${l.was ? `<span class="price-was">${ntd(l.was)}</span>` : ""}</div>
         <div class="qty"><button data-q="${i}" data-d="-1">−</button><span>${l.qty}</span><button data-q="${i}" data-d="1">＋</button></div>
       </div>`).join("");
-    $("#drawerFoot").innerHTML = sumHtml() + `<button class="btn btn-sale" id="goCheckout">前往結帳</button>`;
+    const needsDetails = cartNeedsEzway();
+    $("#drawerFoot").innerHTML = sumHtml() + `<button class="btn btn-sale" id="${needsDetails ? "goCheckout" : "placeOrder"}">${needsDetails ? "填寫訂購資料" : "送出訂單"}</button>`;
   }
 
   function cartNeedsEzway() {
@@ -426,13 +427,13 @@
       ${f("phone", "手機", 'type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" pattern="09[0-9]{8}" placeholder="09XXXXXXXX"', "10 碼數字，例如 0912345678")}
       ${f("line", "LINE ID", 'maxlength="40"', "方便我們用 LINE 和你確認訂單")}
       ${f("email", "Email", 'type="email" autocomplete="email" maxlength="80" placeholder="name@example.com"')}
-      <fieldset class="store">
+      <fieldset class="store" hidden>
         <legend>7-11 賣貨便取貨門市 <span class="req">*</span></legend>
         <a class="store-link" href="https://emap.pcsc.com.tw/" target="_blank" rel="noopener">🔍 打開 7-11 電子地圖查詢門市 ↗</a>
         <div class="hint">可用縣市、店名或路名查詢；點選門市即可看到店號。請把「店名」和「店號」都填上，我們會雙重核對。</div>
         <div class="store-row">
-          <div>${f("storeName", "門市名稱", 'maxlength="20" placeholder="例：鑫台北"')}</div>
-          <div>${f("storeId", "門市店號", 'inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="6 碼數字"')}</div>
+          <div><label for="storeName">門市名稱</label><input id="storeName" name="storeName" maxlength="20" placeholder="例：鑫台北" value="${esc(saved.storeName || "")}"></div>
+          <div><label for="storeId">門市店號</label><input id="storeId" name="storeId" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" placeholder="6 碼數字" value="${esc(saved.storeId || "")}"></div>
         </div>
       </fieldset>
       ${cartNeedsEzway() ? ezwayHtml() : ""}
@@ -468,19 +469,20 @@
     return true;
   }
 
-  async function submitOrder(e) {
-    e.preventDefault();
-    if (!validate(e.target)) return;
-    const buyer = Object.fromEntries(new FormData(e.target));
-    const ezway = buyer.ezway === "on";
-    delete buyer.ezway;
-    buyer.store = `${buyer.storeName}（店號 ${buyer.storeId}）`;
-    try { localStorage.setItem("yoto-buyer", JSON.stringify({ ...buyer, note: "" })); } catch {}
+  function orderItems() {
+    return cart.map((l) => ({ ...l, cat: l.cat || products.find((p) => p.handle === l.handle)?.cat || "" }));
+  }
+
+  async function placeOrder(buyer, ezway) {
     const t = totals();
     const orderNo = "Y" + new Date().toISOString().slice(2, 10).replace(/-/g, "") + Math.random().toString(36).slice(2, 6).toUpperCase();
     const text = [
       `【${S.name} 訂單 ${orderNo}】`,
-      `姓名：${buyer.name}`, `手機：${buyer.phone}`, `LINE：${buyer.line}`, `Email：${buyer.email}`, `7-11 門市：${buyer.store}`,
+      buyer.name ? `姓名：${buyer.name}` : null,
+      buyer.phone ? `手機：${buyer.phone}` : null,
+      buyer.line ? `LINE：${buyer.line}` : null,
+      buyer.email ? `Email：${buyer.email}` : null,
+      buyer.store ? `7-11 門市：${buyer.store}` : null,
       ezway ? "EZ WAY：已用此姓名與手機完成實名認證" : null,
       buyer.note ? `備註：${buyer.note}` : null,
       "", "— 商品 —",
@@ -494,7 +496,7 @@
         res = await fetch(S.orderWebhookUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderNo, ...buyer, ezway, items: cart, ...t, text }),
+          body: JSON.stringify({ orderNo, ...buyer, ezway, items: orderItems(), ...t, text }),
         });
       } catch {
         toast("訂單沒有送出，請檢查網路後再試");
@@ -511,8 +513,8 @@
     const b = S.bank;
     $("#drawerTitle").textContent = "訂單已建立 🎉";
     $("#drawerBody").innerHTML = `
-      <p>訂單編號 <b>${orderNo}</b>。請匯款訂金 <b style="color:var(--sale)">${ntd(t.deposit)}</b>，匯款後請將<b>匯款帳號末五碼</b>與下方訂單內容傳到 LINE 官方帳號，確認後立即向美國官網下單。</p>
-      <div class="bank">${esc(b.name)}（${esc(b.code)}）<br>帳號：<b>${esc(b.account)}</b><br>戶名：${esc(b.holder)}</div>
+      <p>訂單編號 <b>${orderNo}</b>。請將下方訂單內容傳到 LINE 官方帳號，將提供匯款帳號，確認及收訂後立即向美國官網下單。</p>
+      <div class="bank" hidden>${esc(b.name)}（${esc(b.code)}）<br>帳號：<b>${esc(b.account)}</b><br>戶名：${esc(b.holder)}</div>
       ${lineBoxHtml()}
       <p style="margin-bottom:6px"><b>訂單內容</b></p>
       <textarea class="order-text" id="orderText" readonly>${esc(text)}</textarea>`;
@@ -526,6 +528,21 @@
       toast("已複製訂單內容");
     };
     cart = []; save();
+  }
+
+  async function submitOrder(e) {
+    e.preventDefault();
+    if (!validate(e.target)) return;
+    const buyer = Object.fromEntries(new FormData(e.target));
+    const ezway = buyer.ezway === "on";
+    delete buyer.ezway;
+    buyer.store = buyer.storeName || buyer.storeId ? `${buyer.storeName}（店號 ${buyer.storeId}）` : "";
+    try { localStorage.setItem("yoto-buyer", JSON.stringify({ ...buyer, note: "" })); } catch {}
+    await placeOrder(buyer, ezway);
+  }
+
+  function submitDirect() {
+    placeOrder({ name: "", phone: "", line: "", email: "", store: "", storeName: "", storeId: "", note: "" }, false);
   }
 
   function openDrawer() { showCart(); $("#drawer").classList.add("open"); $("#scrim").hidden = false; }
@@ -542,6 +559,7 @@
       save(); showCart();
     }
     if (e.target.id === "goCheckout") showCheckout();
+    if (e.target.id === "placeOrder") submitDirect();
     if (e.target.id === "backCart") showCart();
   });
 

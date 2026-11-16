@@ -201,3 +201,17 @@ test("a player order still requires buyer details", async () => {
   const body = await created.json();
   assert.match(body.error, /姓名/);
 });
+
+test("a player order does not need an email", async () => {
+  const created = await fetch(`${base}/api/orders`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      ...sample,
+      orderNo: "Y261106NOMAIL",
+      email: "",
+      items: [{ ...sample.items[0], cat: "player" }],
+    }),
+  });
+  assert.equal(created.status, 201);
+});

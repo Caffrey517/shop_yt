@@ -426,7 +426,6 @@
       ${f("name", "姓名", 'autocomplete="name" maxlength="30"')}
       ${f("phone", "手機", 'type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" pattern="09[0-9]{8}" placeholder="09XXXXXXXX"', "10 碼數字，例如 0912345678")}
       ${f("line", "LINE ID", 'maxlength="40"', "方便我們用 LINE 和你確認訂單")}
-      ${f("email", "Email", 'type="email" autocomplete="email" maxlength="80" placeholder="name@example.com"')}
       <fieldset class="store" hidden>
         <legend>7-11 賣貨便取貨門市 <span class="req">*</span></legend>
         <a class="store-link" href="https://emap.pcsc.com.tw/" target="_blank" rel="noopener">🔍 打開 7-11 電子地圖查詢門市 ↗</a>
@@ -452,7 +451,6 @@
     name: "請填寫姓名",
     phone: "手機請填 10 碼數字，09 開頭（例如 0912345678）",
     line: "請填寫 LINE ID",
-    email: "Email 格式不正確，需包含 @（例如 name@example.com）",
     storeName: "請填寫 7-11 門市名稱",
     storeId: "門市店號為 6 碼數字，可在 7-11 電子地圖查詢",
     ezway: "請確認已用上方姓名、手機完成 EZ WAY 實名認證",
@@ -462,7 +460,7 @@
     form.querySelectorAll("input[required]").forEach((el) => {
       el.value = el.value.trim();
       el.setCustomValidity("");
-      const ok = el.checkValidity() && !(el.name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value));
+      const ok = el.checkValidity();
       if (!ok) { el.setCustomValidity(MSG[el.name] || "請填寫此欄位"); el.classList.add("bad"); first ||= el; }
     });
     if (first) { first.focus(); first.reportValidity(); return false; }
@@ -481,7 +479,6 @@
       buyer.name ? `姓名：${buyer.name}` : null,
       buyer.phone ? `手機：${buyer.phone}` : null,
       buyer.line ? `LINE：${buyer.line}` : null,
-      buyer.email ? `Email：${buyer.email}` : null,
       buyer.store ? `7-11 門市：${buyer.store}` : null,
       ezway ? "EZ WAY：已用此姓名與手機完成實名認證" : null,
       buyer.note ? `備註：${buyer.note}` : null,

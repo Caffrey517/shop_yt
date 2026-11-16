@@ -237,6 +237,7 @@
   }
 
   function renderTicker() {
+    if (!$("#ticker")) return;
     const sales = products.filter((p) => offPct(best(p)) > 0).sort((a, b) => offPct(best(b)) - offPct(best(a))).slice(0, 8);
     const bits = sales.length
       ? sales.map((p) => `<span>🔥 ${esc(p.title)} ${ntd(best(p).now)}（-${offPct(best(p))}%）</span>`)

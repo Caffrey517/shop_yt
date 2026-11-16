@@ -20,7 +20,7 @@
   const ntd = (n) => "NT$" + Math.round(n).toLocaleString("en-US");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  // 售價公式：美金 × 匯率 + 固定加價
+  // 售價公式：美國官網美金價 × 即期匯率
   function toNtd(usd, group) {
     const r = S.pricing[group];
     return Math.round(Number(usd) * r.rate + r.plus);
@@ -44,7 +44,6 @@
   let cart = load();
 
   // ---------- 文字帶入 ----------
-  const d = S.pricing.device, c = S.pricing.card;
   const brandTag = (S.name || "").replace(/^kokola\s*/i, "");
   document.querySelectorAll(".logo-tag").forEach((el) => { el.textContent = brandTag; });
   document.title = S.name;
@@ -72,7 +71,7 @@
   }
   const footLine = $("#footLine");
   if (footLine) footLine.href = lineUrl;
-  $("#rateNote").textContent = `固定匯率・播放器 ${d.rate}／卡片 ${c.rate}+${c.plus}`;
+  $("#rateNote").textContent = "美國售價*(即期匯率)";
 
   // ---------- 抓官網商品 ----------
   async function fetchAll() {
@@ -241,7 +240,7 @@
     const sales = products.filter((p) => offPct(best(p)) > 0).sort((a, b) => offPct(best(b)) - offPct(best(a))).slice(0, 8);
     const bits = sales.length
       ? sales.map((p) => `<span>🔥 ${esc(p.title)} ${ntd(best(p).now)}（-${offPct(best(p))}%）</span>`)
-      : [`<span>美國官網價格即時同步・固定匯率・價格透明</span>`];
+      : [`<span>美國官網價格即時同步・即期匯率・價格透明</span>`];
     $("#ticker").innerHTML = bits.join("") + bits.join(""); // 兩份以無縫捲動
   }
 
@@ -590,8 +589,19 @@
     }
   }
 
+  async function loadRate() {
+    const res = await fetch("/api/fx");
+    if (!res.ok) throw new Error("rate");
+    const data = await res.json();
+    const rate = Number(data.rate);
+    if (!Number.isFinite(rate) || rate <= 0) throw new Error("rate");
+    S.pricing.device = { rate, plus: 0 };
+    S.pricing.card = { rate, plus: 0 };
+    $("#rateNote").textContent = `美國售價*${data.rate}(即期匯率)`;
+  }
+
   updateCount();
-  Promise.all([fetchAll(), loadCollections()])
+  Promise.all([fetchAll(), loadCollections(), loadRate()])
     .then(([raw]) => {
       products = raw.map(normalize).filter(Boolean).concat(thirdParty());
       refreshCartPrices();
@@ -601,6 +611,8 @@
     })
     .catch((err) => {
       console.error(err);
-      $("#status").textContent = "無法連線美國官網，請稍後重新整理。";
+      $("#status").textContent = err && err.message === "rate"
+        ? "匯率暫時無法取得，請稍後重新整理。"
+        : "無法連線美國官網，請稍後重新整理。";
     });
 })();

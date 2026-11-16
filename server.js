@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const orders = require("./lib/orders");
+const fx = require("./lib/fx");
 
 const app = express();
 const publicDir = path.join(__dirname, "public");
@@ -50,6 +51,15 @@ function limited(ip) {
   if (hits.size > 5000) hits.clear();
   return false;
 }
+
+app.get("/api/fx", async (_req, res) => {
+  try {
+    const quote = await fx.fetchUsdSpotSell();
+    res.json({ ok: true, rate: quote.display, asOf: quote.asOf });
+  } catch {
+    res.status(502).json({ ok: false, error: "匯率暫時無法取得" });
+  }
+});
 
 app.get("/api/orders", (req, res) => {
   if (!orders.keyOk(req.query.key)) return res.status(401).json({ ok: false, error: "unauthorized" });

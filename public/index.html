@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=2" />
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png?v=2" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2" />
+  <link rel="shortcut icon" href="favicon.ico?v=2" />
+  <link rel="manifest" href="site.webmanifest" />
+  <title>kokola 育兒購物</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-in">
+      <a href="#" class="logo"><img class="logo-koala" src="kokola-mark.jpg" alt="" width="40" height="40"><span class="logo-brand"><span class="logo-word">kokola</span><img class="logo-leaf" src="logo-leaf.png" alt="" width="30" height="28"></span><span class="logo-tag" id="shopTag"></span></a>
+      <nav class="top-nav">
+        <a href="#shop" data-jump="player">播放器</a>
+        <a href="#shop" data-jump="combo">播放器組合</a>
+        <a href="#shop" data-jump="single">故事卡</a>
+        <a href="#shop" data-jump="pack">卡片套組</a>
+        <a href="#shop" data-jump="acc">配件</a>
+      </nav>
+      <button class="cart-btn" id="cartOpen" aria-label="購物車">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 2H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
+        <b id="cartCount">0</b>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-banner">
+        <img class="hero-wide" src="hero-banner.jpg" alt="讓故事與音樂，陪伴孩子的每一段時光">
+        <img class="hero-phone" src="hero-player.jpg?v=2" alt="">
+        <div class="hero-copy">
+          <h1>讓故事與音樂，<br>陪伴孩子的每一段時光</h1>
+          <p>Yoto 美國官網代購｜精選故事・音樂・學習內容</p>
+          <div class="hero-cta">
+            <a href="#shop" class="btn btn-sage">探索商品 →</a>
+            <a href="#how" class="btn btn-ghost hero-flow">訂購流程</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="perks">
+    <div class="wrap perks-row">
+      <article>
+        <span class="perk-ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M10 16h28l-2.4 16H13z"/><path d="M10 16 8 9H4"/><circle cx="18" cy="38" r="2"/><circle cx="32" cy="38" r="2"/></svg></span>
+        <h3>美國官網採購</h3>
+        <p>正品來源<br>安心選購</p>
+      </article>
+      <article>
+        <span class="perk-ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 18 24 10l16 8-16 8z"/><path d="M8 18v12l16 8 16-8V18"/><path d="M24 26v12"/></svg></span>
+        <h3>透明訂購流程</h3>
+        <p>流程清楚<br>進度即時更新</p>
+      </article>
+      <article>
+        <span class="perk-ico" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M10 12h24a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4H20l-8 6v-6h-2a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z"/></svg></span>
+        <h3>LINE 訂單服務</h3>
+        <p>專人協助<br>訂購更輕鬆</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="how" id="how">
+    <div class="wrap">
+      <h2>訂購流程</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-no">01</span>
+          <div class="step-icon"><svg viewBox="0 0 48 48"><path d="M9 16h30l-2.5 16H12z"/><path d="M9 16 7 9H3"/><circle cx="17" cy="38.5" r="2"/><circle cx="32" cy="38.5" r="2"/></svg></div>
+          <h3>選商品</h3>
+          <p>選擇主機、配件<br>與喜愛的故事卡</p>
+        </li>
+        <li>
+          <span class="step-no">02</span>
+          <div class="step-icon"><svg viewBox="0 0 48 48"><rect x="13" y="8" width="22" height="30" rx="3"/><path d="M18 8.5h12v5H18z"/><path d="M18 20h12M18 26h12M18 32h8"/></svg></div>
+          <h3>填寫訂單</h3>
+          <p>依商品提供必要訂購資訊</p>
+        </li>
+        <li>
+          <span class="step-no">03</span>
+          <div class="step-icon"><svg viewBox="0 0 48 48"><rect x="6" y="13" width="36" height="22" rx="3"/><path d="M6 20h36"/><path d="M12 28h8"/></svg></div>
+          <h3>計算金額及訂金</h3>
+          <p id="depositText">計算金額及20%訂金</p>
+        </li>
+        <li>
+          <span class="step-no">04</span>
+          <div class="step-icon step-line"><svg viewBox="0 0 48 48"><path d="M8 12h26a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4H18l-8 6v-6H8a4 4 0 0 1-4-4V16a4 4 0 0 1 4-4z"/></svg><span>LINE</span></div>
+          <h3>加入 LINE</h3>
+          <p>傳送訂單編號，<br>後續付款確認、<br>採購進度與到貨通知<br>都會在 LINE 與你聯繫</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <main class="shop" id="shop">
+    <div class="wrap">
+      <div class="shop-head">
+        <h2>全部商品</h2>
+        <p class="rate-note" id="rateNote"></p>
+      </div>
+
+      <div class="toolbar">
+        <div class="tabs" id="tabs">
+          <button data-cat="all" class="on">全部</button>
+          <button data-cat="sale" hidden>🔥 特價中</button>
+          <button data-cat="player">播放器</button>
+          <button data-cat="combo">播放器組合</button>
+          <button data-cat="single">故事卡</button>
+          <button data-cat="pack">卡片套組</button>
+          <button data-cat="acc">原廠配件</button>
+          <button data-cat="tp" hidden>副廠配件</button>
+        </div>
+        <div class="ages" id="ages">
+          <span>依年齡推薦故事卡：</span>
+          <button data-age="" class="on">不限</button>
+          <button data-age="0-2">0–2 歲</button>
+          <button data-age="3-5">3–5 歲</button>
+          <button data-age="6-8">6–8 歲</button>
+          <button data-age="9+">9 歲以上</button>
+        </div>
+        <div class="ages" id="themes">
+          <span>卡片類型：</span>
+          <div class="scroller" id="themeList"></div>
+        </div>
+        <div class="filters">
+          <div class="search">
+            <input id="q" type="search" placeholder="Find your card!" />
+            <div class="quick" id="quick"></div>
+          </div>
+          <select id="lang" aria-label="語言">
+            <option value="english">英文商品</option>
+            <option value="">所有語言</option>
+            <option value="spanish">西班牙文</option>
+            <option value="french">法文</option>
+          </select>
+          <select id="sort">
+            <option value="rec">推薦排序</option>
+            <option value="off">折扣最多</option>
+            <option value="asc">價格低 → 高</option>
+            <option value="desc">價格高 → 低</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="status" id="status">正在同步美國官網商品…</p>
+      <div class="grid" id="grid"></div>
+      <div class="more"><button class="btn btn-line" id="more" hidden>載入更多</button></div>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <div class="foot-brand">
+        <div class="logo"><img class="logo-koala" src="kokola-mark.jpg" alt="" width="40" height="40"><span class="logo-brand"><span class="logo-word">kokola</span><img class="logo-leaf" src="logo-leaf.png" alt="" width="30" height="28"></span><span class="logo-tag" id="footTag"></span></div>
+        <p>可可拉選物工作室<br>統一編號 61640881</p>
+      </div>
+      <a class="foot-line" id="footLine" target="_blank" rel="noopener">加入 LINE 官方帳號</a>
+    </div>
+  </footer>
+
+  <!-- 購物車 / 結帳 -->
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-brand">
+      <img class="drawer-koala" src="kokola-mark.jpg" alt="">
+      <span class="logo"><span class="logo-brand"><span class="logo-word">kokola</span><img class="logo-leaf" src="logo-leaf.png" alt="" width="30" height="28"></span><span class="logo-tag"></span></span>
+    </div>
+    <div class="drawer-head">
+      <h3 id="drawerTitle">購物車</h3>
+      <button class="x" id="cartClose" aria-label="關閉">×</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-foot" id="drawerFoot"></div>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

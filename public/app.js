@@ -57,7 +57,7 @@
   const brandTag = (S.name || "").replace(/^kokola\s*/i, "");
   document.querySelectorAll(".logo-tag").forEach((el) => { el.textContent = brandTag; });
   document.title = S.name;
-  if ($("#depositText")) $("#depositText").innerHTML = `依訂單金額<br>支付 ${S.depositRate * 100}% 訂金，<br>尾款於取貨時結清`;
+  if ($("#depositText")) $("#depositText").textContent = "計算金額及20%訂金";
   // LINE 官方帳號（@開頭）與個人 ID 的加好友連結格式不同
   const lineUrl = "https://line.me/R/ti/p/" + (S.lineId.startsWith("@") ? encodeURIComponent(S.lineId) : "~" + encodeURIComponent(S.lineId));
   // LINE 官方帳號的 QR Code 由 LINE 提供（個人 ID 沒有這個網址，就不顯示 QR）
@@ -391,12 +391,27 @@
         <div class="qty"><button data-q="${i}" data-d="-1">−</button><span>${l.qty}</span><button data-q="${i}" data-d="1">＋</button></div>
       </div>`).join("");
     const needsDetails = cartNeedsEzway();
-    $("#drawerFoot").innerHTML = sumHtml() + `<button class="btn btn-sale" id="${needsDetails ? "goCheckout" : "placeOrder"}">${needsDetails ? "填寫訂購資料" : "送出訂單"}</button>`;
+    const overPlayers = playerMachineQty() > 2;
+    const next = needsDetails
+      ? `<button class="btn btn-sale" id="goCheckout"${overPlayers ? " disabled" : ""}>填寫訂購資料</button>`
+      : `<button class="btn btn-sale" id="placeOrder">送出訂單</button>`;
+    $("#drawerFoot").innerHTML = sumHtml() + (overPlayers ? `<p class="player-limit">故事機一次上限最多兩台</p>` : "") + next;
+  }
+
+  function lineCat(line) {
+    return line.cat || products.find((p) => p.handle === line.handle)?.cat;
+  }
+
+  function playerMachineQty() {
+    return cart.reduce((sum, line) => {
+      const cat = lineCat(line);
+      return cat === "player" || cat === "combo" ? sum + line.qty : sum;
+    }, 0);
   }
 
   function cartNeedsEzway() {
-    return cart.some((l) => {
-      const cat = l.cat || products.find((p) => p.handle === l.handle)?.cat;
+    return cart.some((line) => {
+      const cat = lineCat(line);
       return cat === "player" || cat === "combo";
     });
   }
@@ -570,7 +585,7 @@
       if (l.qty <= 0) cart.splice(q.dataset.q, 1);
       save(); showCart();
     }
-    if (e.target.id === "goCheckout") showCheckout();
+    if (e.target.id === "goCheckout" && playerMachineQty() <= 2) showCheckout();
     if (e.target.id === "placeOrder") submitDirect();
     if (e.target.id === "backCart") showCart();
   });

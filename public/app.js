@@ -396,7 +396,7 @@
     const next = needsDetails
       ? `<button class="btn btn-sale" id="goCheckout"${overPlayers ? " disabled" : ""}>填寫訂購資料</button>`
       : `<button class="btn btn-sale" id="placeOrder">送出訂單</button>`;
-    $("#drawerFoot").innerHTML = sumHtml() + (overPlayers ? `<p class="player-limit">故事機一次上限最多兩台</p>` : "") + next;
+    $("#drawerFoot").innerHTML = sumHtml() + (overPlayers ? `<p class="player-limit">故事機(含故事機組合)一次上限最多兩台</p>` : "") + next;
   }
 
   function lineCat(line) {

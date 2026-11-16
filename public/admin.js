@@ -29,22 +29,22 @@
       return { usd: usdNow, now: f(usdNow), was: usdWas ? f(usdWas) : null };
     };
     const I = {
-      mini: { handle: "yoto-mini-player-2024", title: "Yoto Mini (2024 Edition)", ...P("device", 59.99, 79.99) },
-      player: { handle: "yoto-player-3rd-generation-thailand", title: "Yoto Player (3rd Generation)", ...P("device", 82.49, 109.99) },
-      bluey: { handle: "bluey-the-beach-and-other-stories-na", title: "Bluey: The Beach and Other Stories", ...P("card", 12.99) },
-      tiger: { handle: "daniel-tiger-s-neighborhood-5-minute-stories", title: "Daniel Tiger’s Neighborhood 5-Minute Stories", ...P("card", 12.99) },
-      zoo: { handle: "dear-zoo", title: "Dear Zoo", ...P("card", 5.99) },
-      cardcase: { handle: "card-case", title: "Card Case", variant: "Blue", ...P("device", 22.49, 29.99) },
-      phones: { handle: "wireless-headphones", title: "Wireless Headphones", ...P("device", 33.74, 44.99) },
-      spooky: { handle: "super-spooky-songs", title: "Super Spooky Songs", ...P("card", 9.99) },
-      preschool: { handle: "pre-school-songs-pack", title: "Pre-School Songs Pack", ...P("card", 15.99, 19.99) },
+      mini: { handle: "yoto-mini-player-2024", title: "Yoto Mini (2024 Edition)", cat: "player", ...P("device", 59.99, 79.99) },
+      player: { handle: "yoto-player-3rd-generation-thailand", title: "Yoto Player (3rd Generation)", cat: "player", ...P("device", 82.49, 109.99) },
+      bluey: { handle: "bluey-the-beach-and-other-stories-na", title: "Bluey: The Beach and Other Stories", cat: "single", ...P("card", 12.99) },
+      tiger: { handle: "daniel-tiger-s-neighborhood-5-minute-stories", title: "Daniel Tiger’s Neighborhood 5-Minute Stories", cat: "single", ...P("card", 12.99) },
+      zoo: { handle: "dear-zoo", title: "Dear Zoo", cat: "single", ...P("card", 5.99) },
+      cardcase: { handle: "card-case", title: "Card Case", variant: "Blue", cat: "acc", ...P("device", 22.49, 29.99) },
+      phones: { handle: "wireless-headphones", title: "Wireless Headphones", cat: "acc", ...P("device", 33.74, 44.99) },
+      spooky: { handle: "super-spooky-songs", title: "Super Spooky Songs", cat: "single", ...P("card", 9.99) },
+      preschool: { handle: "pre-school-songs-pack", title: "Pre-School Songs Pack", cat: "pack", ...P("card", 15.99, 19.99) },
     };
     const mk = (i, day, hh, status, last5, buyer, lines, note = "", adminNote = "") => {
       const items = lines.map(([k, qty]) => ({ ...I[k], qty }));
       const total = items.reduce((s, l) => s + l.now * l.qty, 0);
       const deposit = Math.ceil(total * S.depositRate);
       return {
-        orderNo: `Y2610${String(day).padStart(2, "0")}${["K3FA", "M8QZ", "P2LD", "R7XW", "T4NB", "V9HC", "W1JE", "X6GS"][i]}`,
+        orderNo: `Y2610${String(day).padStart(2, "0")}${["K3FA", "M8QZ", "P2LD", "R7XW", "T4NB", "V9HC", "W1JE", "X6GS", "C2KA"][i]}`,
         createdAt: new Date(2026, 9, day, hh, (i * 17) % 60).toISOString(),
         status, last5, ...buyer, note, adminNote, items, total, deposit, rest: total - deposit,
       };
@@ -57,6 +57,7 @@
       mk(3, 7, 10, "已收訂金", "90577", B("王志明（示範）", "demo_zhiming", "7-11 示範門市 D"), [["player", 1], ["spooky", 1], ["bluey", 1]]),
       mk(4, 6, 19, "已收訂金", "31046", B("黃淑芬（示範）", "demo_shufen", "7-11 示範門市 E"), [["mini", 1], ["phones", 1], ["zoo", 2]]),
       mk(5, 3, 20, "已向官網下單", "77120", B("李佳穎（示範）", "demo_jiaying", "7-11 示範門市 F"), [["tiger", 2], ["preschool", 1]], "", "US 訂單 #100231"),
+      mk(8, 5, 11, "已收訂金", "24680", B("簡書廷（示範）", "demo_shuting", "7-11 示範門市 I"), [["bluey", 1], ["zoo", 2]]),
       mk(6, 2, 9, "已抵台", "60985", B("吳宗翰（示範）", "demo_zonghan", "7-11 示範門市 G"), [["player", 1]]),
       mk(7, 1, 16, "已完成", "13579", B("蔡依玲（示範）", "demo_yiling", "7-11 示範門市 H"), [["mini", 1], ["bluey", 1], ["spooky", 1]]),
     ];
@@ -264,6 +265,7 @@
 
   // 採購清單的商品圖：從官網抓一次
   const imgs = {};
+  const handleCat = {};
   let imgsLoaded = false;
   async function loadImgs() {
     if (imgsLoaded) return; imgsLoaded = true;
@@ -271,19 +273,86 @@
       for (let p = 1; p < 20; p++) {
         const { products } = await fetch(`https://us.yotoplay.com/products.json?limit=250&page=${p}`).then((r) => r.json());
         if (!products.length) break;
-        products.forEach((x) => { if (x.images[0]) imgs[x.handle] = x.images[0].src + "&width=120"; });
+        products.forEach((x) => {
+          if (x.images[0]) imgs[x.handle] = x.images[0].src + "&width=120";
+          const cat = { "player-unit": "player", "content-bundle": "combo", accessories: "acc", "single-card": "single", bundle: "pack", "soft-bundle": "pack" }[x.product_type];
+          if (cat) handleCat[x.handle] = cat;
+        });
       }
-      if (ui.view === "buy") render();
+      if (["buy", "playerList", "cardList"].includes(ui.view)) render();
     } catch {}
+  }
+
+  function shopLists() {
+    return splitOrderLists(orders, BUY_STATUSES, handleCat);
+  }
+
+  function productName(row) {
+    return `${esc(row.title)}${row.variant ? `（${esc(row.variant)}）` : ""}`;
+  }
+
+  function orderPivotTable(pivot) {
+    const { orders: list, products } = pivot;
+    if (!list.length) return `<p class="empty">目前沒有符合的訂單</p>`;
+    const head = list.map((order) => `<th colspan="3">${esc(order.orderNo)}</th>`).join("");
+    const sub = list.map(() => `<th>數量</th><th>台幣</th><th>美金</th>`).join("");
+    const body = products.map((row) => `<tr>
+      <td>${productName(row)}</td>
+      ${list.map((order) => {
+        const cell = row.cells[order.orderNo];
+        return cell ? `<td>${cell.qty}</td><td>${ntd(cell.twd)}</td><td>${usd(cell.usd)}</td>` : `<td></td><td></td><td></td>`;
+      }).join("")}
+    </tr>`).join("");
+    const totals = list.map((order) => {
+      const cells = products.map((row) => row.cells[order.orderNo]).filter(Boolean);
+      const qty = cells.reduce((sum, cell) => sum + cell.qty, 0);
+      const twd = cells.reduce((sum, cell) => sum + cell.twd, 0);
+      const usdSum = cells.reduce((sum, cell) => sum + cell.usd, 0);
+      return `<td>${qty}</td><td>${ntd(twd)}</td><td>${usd(usdSum)}</td>`;
+    }).join("");
+    return `<div class="pivot-wrap"><table class="pivot">
+      <thead><tr><th rowspan="2">商品</th>${head}</tr><tr>${sub}</tr></thead>
+      <tbody>${body}<tr class="total"><td>總計</td>${totals}</tr></tbody>
+    </table></div>`;
+  }
+
+  function productPivotTable(products) {
+    if (!products.length) return `<p class="empty">目前沒有符合的商品</p>`;
+    const head = products.map((row) => `<th colspan="3">${productName(row)}</th>`).join("");
+    const sub = products.map(() => `<th>數量</th><th>台幣</th><th>美金</th>`).join("");
+    const cells = products.map((row) => `<td>${row.qty}</td><td>${ntd(row.twd)}</td><td>${usd(row.usd)}</td>`).join("");
+    return `<div class="pivot-wrap"><table class="pivot">
+      <thead><tr><th rowspan="2">項目</th>${head}</tr><tr>${sub}</tr></thead>
+      <tbody><tr><td>合計</td>${cells}</tr></tbody>
+    </table></div>`;
+  }
+
+  function playerListView() {
+    const { withPlayer } = shopLists();
+    return `<p class="buy-note">狀態為「${BUY_STATUSES.join("、")}」，且含故事機（播放器）或故事機組合（播放器組合）的訂單。每一張訂單各自一欄，不與其他訂單合併。</p>
+      <div class="bar"><button class="btn" id="csvPlayer" type="button">匯出 CSV</button></div>
+      ${orderPivotTable(withPlayer)}`;
+  }
+
+  function cardListView() {
+    const { withoutByOrder, withoutByProduct } = shopLists();
+    return `<p class="buy-note">狀態為「${BUY_STATUSES.join("、")}」，且不含故事機或故事機組合的訂單。匯出的第一頁以訂單編號分欄，第二頁以商品分欄。</p>
+      <div class="bar"><button class="btn" id="xlsCards" type="button">匯出兩頁 Excel</button></div>
+      <h3 class="list-sub">依訂單編號</h3>
+      ${orderPivotTable(withoutByOrder)}
+      <h3 class="list-sub">依商品</h3>
+      ${productPivotTable(withoutByProduct)}`;
   }
 
   function render() {
     $("#app").innerHTML = kpis() + `<div class="views">
         <button data-view="orders" class="${ui.view === "orders" ? "on" : ""}">訂單列表</button>
         <button data-view="buy" class="${ui.view === "buy" ? "on" : ""}">美國官網採購清單</button>
+        <button data-view="playerList" class="${ui.view === "playerList" ? "on" : ""}">含故事機獨立清單</button>
+        <button data-view="cardList" class="${ui.view === "cardList" ? "on" : ""}">不含故事機清單</button>
         <button data-view="items" class="${ui.view === "items" ? "on" : ""}">商品統計</button>
-      </div>` + (ui.view === "orders" ? ordersView() : ui.view === "buy" ? buyView() : itemsView());
-    if (ui.view === "buy") loadImgs();
+      </div>` + (ui.view === "orders" ? ordersView() : ui.view === "buy" ? buyView() : ui.view === "playerList" ? playerListView() : ui.view === "cardList" ? cardListView() : itemsView());
+    if (["buy", "playerList", "cardList"].includes(ui.view)) loadImgs();
   }
 
   // ---------- 互動 ----------
@@ -294,6 +363,8 @@
     if (e.target.id === "csv") return exportCsv();
     if (e.target.id === "csvItems") return exportItemsCsv();
     if (e.target.id === "csvBuy") return exportBuyCsv();
+    if (e.target.id === "csvPlayer") return exportPlayerCsv();
+    if (e.target.id === "xlsCards") return exportCardWorkbook();
     const del = e.target.closest("[data-del]");
     if (del) {
       const no = del.closest("[data-detail]")?.dataset.detail;
@@ -422,6 +493,65 @@
     const head = ["商品", "款式", "數量", "台幣單價", "台幣小計", "美金單價", "美金小計"];
     const rows = itemRows().map((r) => [r.title, r.variant, r.qty, r.now, r.now * r.qty, r.usd, r.usd ? r.usd * r.qty : ""]);
     downloadCsv(`items-${new Date().toISOString().slice(0, 10)}.csv`, head, rows);
+  }
+
+  function exportPlayerCsv() {
+    const { withPlayer } = shopLists();
+    const head = ["商品", "款式"];
+    withPlayer.orders.forEach((order) => head.push(`${order.orderNo} 數量`, `${order.orderNo} 台幣`, `${order.orderNo} 美金`));
+    const rows = withPlayer.products.map((row) => {
+      const cells = [row.title, row.variant || ""];
+      withPlayer.orders.forEach((order) => {
+        const cell = row.cells[order.orderNo];
+        cells.push(cell ? cell.qty : "", cell ? cell.twd : "", cell ? cell.usd : "");
+      });
+      return cells;
+    });
+    downloadCsv(`player-orders-${new Date().toISOString().slice(0, 10)}.csv`, head, rows);
+  }
+
+  function sheetRows(name, rows) {
+    const body = rows.map((row) => `<Row>${row.map(sheetCell).join("")}</Row>`).join("");
+    return `<Worksheet ss:Name="${xmlText(name)}"><Table>${body}</Table></Worksheet>`;
+  }
+
+  function xmlText(value) {
+    return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function sheetCell(value) {
+    if (typeof value === "number" && Number.isFinite(value)) return `<Cell><Data ss:Type="Number">${value}</Data></Cell>`;
+    return `<Cell><Data ss:Type="String">${xmlText(value)}</Data></Cell>`;
+  }
+
+  function exportCardWorkbook() {
+    const { withoutByOrder, withoutByProduct } = shopLists();
+    const byOrderHead = ["商品", "款式"];
+    withoutByOrder.orders.forEach((order) => byOrderHead.push(`${order.orderNo} 數量`, `${order.orderNo} 台幣`, `${order.orderNo} 美金`));
+    const byOrderRows = [byOrderHead, ...withoutByOrder.products.map((row) => {
+      const cells = [row.title, row.variant || ""];
+      withoutByOrder.orders.forEach((order) => {
+        const cell = row.cells[order.orderNo];
+        cells.push(cell ? cell.qty : "", cell ? cell.twd : "", cell ? cell.usd : "");
+      });
+      return cells;
+    })];
+    const byProductHead = ["項目"];
+    withoutByProduct.forEach((row) => {
+      const name = row.variant ? `${row.title}（${row.variant}）` : row.title;
+      byProductHead.push(`${name} 數量`, `${name} 台幣`, `${name} 美金`);
+    });
+    const byProductRow = ["合計", ...withoutByProduct.flatMap((row) => [row.qty, row.twd, row.usd])];
+    const xml = `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+${sheetRows("依訂單編號", byOrderRows)}
+${sheetRows("依商品", [byProductHead, byProductRow])}
+</Workbook>`;
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([xml], { type: "application/vnd.ms-excel" }));
+    a.download = `card-orders-${new Date().toISOString().slice(0, 10)}.xls`;
+    a.click();
   }
 
   function downloadCsv(filename, head, rows) {

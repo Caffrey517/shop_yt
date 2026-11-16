@@ -291,13 +291,20 @@
     return `${esc(row.title)}${row.variant ? `（${esc(row.variant)}）` : ""}`;
   }
 
+  function productLink(row) {
+    const name = productName(row);
+    if (!row.handle || String(row.handle).startsWith("tp-")) return name;
+    const url = `https://us.yotoplay.com/products/${encodeURIComponent(row.handle)}`;
+    return `<a href="${esc(url)}" target="_blank" rel="noopener">${name}</a>`;
+  }
+
   function orderPivotTable(pivot) {
     const { orders: list, products } = pivot;
     if (!list.length) return `<p class="empty">目前沒有符合的訂單</p>`;
     const head = list.map((order) => `<th colspan="3">${esc(order.orderNo)}</th>`).join("");
     const sub = list.map(() => `<th>數量</th><th>台幣</th><th>美金</th>`).join("");
     const body = products.map((row) => `<tr>
-      <td>${productName(row)}</td>
+      <td>${productLink(row)}</td>
       ${list.map((order) => {
         const cell = row.cells[order.orderNo];
         return cell ? `<td>${cell.qty}</td><td>${ntd(cell.twd)}</td><td>${usd(cell.usd)}</td>` : `<td></td><td></td><td></td>`;
@@ -318,7 +325,7 @@
 
   function productPivotTable(products) {
     if (!products.length) return `<p class="empty">目前沒有符合的商品</p>`;
-    const head = products.map((row) => `<th colspan="3">${productName(row)}</th>`).join("");
+    const head = products.map((row) => `<th colspan="3">${productLink(row)}</th>`).join("");
     const sub = products.map(() => `<th>數量</th><th>台幣</th><th>美金</th>`).join("");
     const cells = products.map((row) => `<td>${row.qty}</td><td>${ntd(row.twd)}</td><td>${usd(row.usd)}</td>`).join("");
     return `<div class="pivot-wrap"><table class="pivot">
@@ -495,12 +502,17 @@
     downloadCsv(`items-${new Date().toISOString().slice(0, 10)}.csv`, head, rows);
   }
 
+  function officialUrl(row) {
+    if (!row.handle || String(row.handle).startsWith("tp-")) return "";
+    return `https://us.yotoplay.com/products/${encodeURIComponent(row.handle)}`;
+  }
+
   function exportPlayerCsv() {
     const { withPlayer } = shopLists();
-    const head = ["商品", "款式"];
+    const head = ["商品", "款式", "官網"];
     withPlayer.orders.forEach((order) => head.push(`${order.orderNo} 數量`, `${order.orderNo} 台幣`, `${order.orderNo} 美金`));
     const rows = withPlayer.products.map((row) => {
-      const cells = [row.title, row.variant || ""];
+      const cells = [row.title, row.variant || "", officialUrl(row)];
       withPlayer.orders.forEach((order) => {
         const cell = row.cells[order.orderNo];
         cells.push(cell ? cell.qty : "", cell ? cell.twd : "", cell ? cell.usd : "");
@@ -520,16 +532,20 @@
   }
 
   function sheetCell(value) {
+    if (value && typeof value === "object" && value.href) {
+      return `<Cell ss:HRef="${xmlText(value.href)}"><Data ss:Type="String">${xmlText(value.text)}</Data></Cell>`;
+    }
     if (typeof value === "number" && Number.isFinite(value)) return `<Cell><Data ss:Type="Number">${value}</Data></Cell>`;
     return `<Cell><Data ss:Type="String">${xmlText(value)}</Data></Cell>`;
   }
 
   function exportCardWorkbook() {
     const { withoutByOrder, withoutByProduct } = shopLists();
-    const byOrderHead = ["商品", "款式"];
+    const byOrderHead = ["商品", "款式", "官網"];
     withoutByOrder.orders.forEach((order) => byOrderHead.push(`${order.orderNo} 數量`, `${order.orderNo} 台幣`, `${order.orderNo} 美金`));
     const byOrderRows = [byOrderHead, ...withoutByOrder.products.map((row) => {
-      const cells = [row.title, row.variant || ""];
+      const url = officialUrl(row);
+      const cells = [url ? { text: row.title, href: url } : row.title, row.variant || "", url];
       withoutByOrder.orders.forEach((order) => {
         const cell = row.cells[order.orderNo];
         cells.push(cell ? cell.qty : "", cell ? cell.twd : "", cell ? cell.usd : "");
@@ -539,7 +555,9 @@
     const byProductHead = ["項目"];
     withoutByProduct.forEach((row) => {
       const name = row.variant ? `${row.title}（${row.variant}）` : row.title;
-      byProductHead.push(`${name} 數量`, `${name} 台幣`, `${name} 美金`);
+      const href = officialUrl(row);
+      const linked = (text) => href ? { text, href } : text;
+      byProductHead.push(linked(`${name} 數量`), linked(`${name} 台幣`), linked(`${name} 美金`));
     });
     const byProductRow = ["合計", ...withoutByProduct.flatMap((row) => [row.qty, row.twd, row.usd])];
     const xml = `<?xml version="1.0"?>

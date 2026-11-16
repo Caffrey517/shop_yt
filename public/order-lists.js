@@ -32,6 +32,7 @@ function columnsByOrder(orders) {
       const key = lineKey(line);
       if (!products.has(key)) {
         products.set(key, {
+          handle: line.handle || "",
           title: line.title || "",
           variant: line.variant || "",
           cells: {},
@@ -51,6 +52,7 @@ function columnsByProduct(orders) {
     for (const line of order.items || []) {
       const key = lineKey(line);
       const row = products.get(key) || {
+        handle: line.handle || "",
         title: line.title || "",
         variant: line.variant || "",
         qty: 0,

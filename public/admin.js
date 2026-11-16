@@ -325,12 +325,16 @@
 
   function productPivotTable(products) {
     if (!products.length) return `<p class="empty">目前沒有符合的商品</p>`;
-    const head = products.map((row) => `<th colspan="3">${productLink(row)}</th>`).join("");
-    const sub = products.map(() => `<th>數量</th><th>台幣</th><th>美金</th>`).join("");
-    const cells = products.map((row) => `<td>${row.qty}</td><td>${ntd(row.twd)}</td><td>${usd(row.usd)}</td>`).join("");
+    const body = products.map((row) => `<tr>
+      <td>${productLink(row)}</td>
+      <td>${row.qty}</td><td>${ntd(row.twd)}</td><td>${usd(row.usd)}</td>
+    </tr>`).join("");
+    const qty = products.reduce((sum, row) => sum + row.qty, 0);
+    const twd = products.reduce((sum, row) => sum + row.twd, 0);
+    const usdSum = products.reduce((sum, row) => sum + row.usd, 0);
     return `<div class="pivot-wrap"><table class="pivot">
-      <thead><tr><th rowspan="2">項目</th>${head}</tr><tr>${sub}</tr></thead>
-      <tbody><tr><td>合計</td>${cells}</tr></tbody>
+      <thead><tr><th>項目</th><th>數量</th><th>台幣</th><th>美金</th></tr></thead>
+      <tbody>${body}<tr class="total"><td>合計</td><td>${qty}</td><td>${ntd(twd)}</td><td>${usd(usdSum)}</td></tr></tbody>
     </table></div>`;
   }
 

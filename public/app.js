@@ -20,10 +20,15 @@
   const ntd = (n) => "NT$" + Math.round(n).toLocaleString("en-US");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  // 售價公式：美國官網美金價 × 即期匯率
+  const FX_URL = "https://www.esunbank.com/zh-tw/personal/deposit/rate/forex/foreign-exchange-rates";
+  // 售價公式：美國官網美金價 × 即期匯率，再加 20% 代購費
   function toNtd(usd, group) {
     const r = S.pricing[group];
-    return Math.round(Number(usd) * r.rate + r.plus);
+    return Math.round((Number(usd) * r.rate + r.plus) * 1.2);
+  }
+  function rateNote(rate) {
+    const link = `<a href="${FX_URL}" target="_blank" rel="noopener">即期匯率</a>`;
+    return `美國售價*${rate ? esc(rate) : ""}(${link})+20%代購費(含運費、手續費等)`;
   }
 
   let products = [];
@@ -71,7 +76,7 @@
   }
   const footLine = $("#footLine");
   if (footLine) footLine.href = lineUrl;
-  $("#rateNote").textContent = "美國售價*(即期匯率)";
+  $("#rateNote").innerHTML = rateNote("");
 
   // ---------- 抓官網商品 ----------
   async function fetchAll() {
@@ -594,7 +599,7 @@
     if (!Number.isFinite(rate) || rate <= 0) throw new Error("rate");
     S.pricing.device = { rate, plus: 0 };
     S.pricing.card = { rate, plus: 0 };
-    $("#rateNote").textContent = `美國售價*${data.rate}(即期匯率)`;
+    $("#rateNote").innerHTML = rateNote(String(data.rate));
   }
 
   updateCount();

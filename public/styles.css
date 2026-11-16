@@ -88,7 +88,8 @@ button { font: inherit; cursor: pointer; }
 .shop { padding: 48px 0 72px; }
 .shop-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
 .shop-head h2 { margin: 0; font-size: 30px; }
-.rate-note { margin: 0; font-size: 13px; background: #ece9dc; padding: 4px 12px; border-radius: 99px; }
+.rate-note { margin: 0; font-size: 13px; background: #ece9dc; padding: 4px 12px; border-radius: 99px; line-height: 1.5; }
+.rate-note a { color: inherit; }
 .toolbar { position: sticky; top: 62px; z-index: 10; background: var(--bg); padding: 14px 0; display: grid; gap: 10px; }
 .tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
 .tabs button { white-space: nowrap; border: 2px solid var(--ink); background: none; color: var(--ink); padding: 6px 16px; border-radius: 99px; font-weight: 500; }

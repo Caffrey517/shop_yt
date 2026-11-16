@@ -53,6 +53,7 @@ function limited(ip) {
 }
 
 app.get("/api/fx", async (_req, res) => {
+  res.set("Cache-Control", "no-store");
   try {
     const quote = await fx.fetchUsdSpotSell();
     res.json({ ok: true, rate: quote.display, asOf: quote.asOf });

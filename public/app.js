@@ -32,6 +32,11 @@
   }
 
   let products = [];
+  let rawCatalog = [];
+  let orderSent = false;
+  let submitting = false;
+  let lastRateAt = 0;
+  const RATE_REFRESH_MS = 5 * 60 * 1000;
   let shown = PAGE_SIZE;
   const state = { cat: "all", q: "", sort: "rec", age: "", theme: "", lang: "english" };
   // 卡片類型：與美國官網選單相同的分類（value = 官網 /collections/ 網址）
@@ -477,6 +482,7 @@
   }
 
   async function placeOrder(buyer, ezway) {
+    submitting = true;
     const t = totals();
     const orderNo = "Y" + new Date().toISOString().slice(2, 10).replace(/-/g, "") + Math.random().toString(36).slice(2, 6).toUpperCase();
     const text = [
@@ -501,10 +507,12 @@
           body: JSON.stringify({ orderNo, ...buyer, ezway, items: orderItems(), ...t, text }),
         });
       } catch {
+        submitting = false;
         toast("訂單沒有送出，請檢查網路後再試");
         return;
       }
       if (!res.ok) {
+        submitting = false;
         let msg = "訂單沒有送出，請稍後再試";
         try { const j = await res.json(); if (j.error) msg = j.error; } catch {}
         toast(msg);
@@ -512,6 +520,8 @@
       }
     }
 
+    orderSent = true;
+    submitting = false;
     const b = S.bank;
     $("#drawerTitle").textContent = "訂單已建立 🎉";
     $("#drawerBody").innerHTML = `
@@ -591,25 +601,54 @@
     }
   }
 
-  async function loadRate() {
-    const res = await fetch("/api/fx");
+  async function readRate() {
+    const res = await fetch("/api/fx", { cache: "no-store" });
     if (!res.ok) throw new Error("rate");
     const data = await res.json();
     const rate = Number(data.rate);
     if (!Number.isFinite(rate) || rate <= 0) throw new Error("rate");
+    const same = S.pricing.device.rate === rate && S.pricing.device.plus === 0 && S.pricing.card.rate === rate;
     S.pricing.device = { rate, plus: 0 };
     S.pricing.card = { rate, plus: 0 };
     $("#rateNote").innerHTML = rateNote(String(data.rate));
+    lastRateAt = Date.now();
+    return !same;
+  }
+
+  function repriceCatalog() {
+    if (!rawCatalog.length) return;
+    products = rawCatalog.map(normalize).filter(Boolean).concat(thirdParty());
+    render();
+    if (orderSent || submitting) return;
+    refreshCartPrices();
+    if (!$("#drawer").classList.contains("open")) return;
+    if ($("#orderForm")) {
+      $("#drawerFoot").innerHTML = sumHtml() + `<button class="btn btn-sale" type="submit" form="orderForm">送出訂單</button><button class="btn" id="backCart">返回購物車</button>`;
+    } else if ($("#drawerTitle").textContent === "購物車") {
+      showCart();
+    }
+  }
+
+  async function syncRate() {
+    try {
+      if (Date.now() - lastRateAt < RATE_REFRESH_MS) return;
+      if (await readRate()) repriceCatalog();
+    } catch {}
   }
 
   updateCount();
-  Promise.all([fetchAll(), loadCollections(), loadRate()])
+  Promise.all([fetchAll(), loadCollections(), readRate()])
     .then(([raw]) => {
+      rawCatalog = raw;
       products = raw.map(normalize).filter(Boolean).concat(thirdParty());
       refreshCartPrices();
       renderFeatured();
       renderTicker();
       render();
+      setInterval(syncRate, RATE_REFRESH_MS);
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") syncRate();
+      });
     })
     .catch((err) => {
       console.error(err);
